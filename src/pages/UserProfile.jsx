@@ -11,11 +11,12 @@ export default function UserProfile() {
     name: 'Usuário',
     email: 'usuario@email.com'
   });
+  
+  // Testando ambos os contextos
   const { authToken } = useContext(AuthContext);
   const { favorites: savedOpportunities, loading } = useFavorites();
 
   useEffect(() => {
-    
     // Get user info from localStorage or context
     const userInfo = JSON.parse(localStorage.getItem('userInfo') || '{}');
     if (userInfo.name || userInfo.email) {

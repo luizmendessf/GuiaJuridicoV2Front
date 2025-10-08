@@ -72,12 +72,21 @@ export const AuthProvider = ({ children }) => {
     return null;
   };
 
+  // Função para verificar se o usuário tem permissões de admin ou organizador
+  const hasAdminOrOrganizerRole = () => {
+    if (!user || !user.authorities) return false;
+    return user.authorities.some(auth => 
+      auth === 'ROLE_ADMIN' || auth === 'ROLE_ORGANIZADOR'
+    );
+  };
+
   const value = {
     user,
     login,
     logout,
     isAuthenticated: !!user,
-    authToken: getValidToken()
+    authToken: getValidToken(),
+    hasAdminOrOrganizerRole
   };
 
   if (loading) {

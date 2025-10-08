@@ -1,8 +1,11 @@
 // src/pages/Oportunidades.jsx
 import { useState, useEffect } from "react";
-import { ImageOff, Search } from "lucide-react";
+import { ImageOff, Search, Plus } from "lucide-react";
 import OpportunityCard from "../components/cards/OpportunityCard";
+import OpportunityForm from "../components/forms/OpportunityForm";
 import Button from "../components/ui/button";
+import { useAuth } from "../context/AuthContext";
+import { createOportunidade, updateOportunidade, deleteOportunidade } from "../services/apiService";
 import "./Oportunidades.css";
 
 // Removido: import opportunitiesData from '../data/oportunidade.json';
@@ -99,7 +102,7 @@ const imageMap = {
 "qca.png": qca,
 "machadomeyer.jpg": machadomeyer,
 "zurano.jpg": zurano,
-"radar.jpg": radar,
+"radar.png": radar,
 "mendes.jpg": mendes,
 "contabilizei.jpg": contabilizei,
 
@@ -150,38 +153,92 @@ export default function Oportunidades() {
   const [selectedStatus, setSelectedStatus] = useState("Todas");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [showForm, setShowForm] = useState(false);
+  const [editingOpportunity, setEditingOpportunity] = useState(null);
+  const [formLoading, setFormLoading] = useState(false);
+  
+  const { hasAdminOrOrganizerRole } = useAuth();
+  const canManageOpportunities = hasAdminOrOrganizerRole();
+
+  const fetchOpportunities = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch('http://localhost:8080/api/oportunidades/todas');
+      
+      if (!response.ok) {
+        throw new Error(`Erro ${response.status}: ${response.statusText}`);
+      }
+      
+      const data = await response.json();
+      
+      const processedOpportunities = data.map(opportunity => ({
+        ...opportunity,
+        image: imageMap[opportunity.image] || imageMap['estagio.jpg'], // fallback image
+        status: getOpportunityStatus(opportunity.openingDate, opportunity.closingDate),
+        requirements: opportunity.requirements ? JSON.parse(opportunity.requirements) : []
+      }));
+      
+      setOpportunities(processedOpportunities);
+      setError(null);
+    } catch (err) {
+      console.error('Erro ao buscar oportunidades:', err);
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchOpportunities = async () => {
-      try {
-        setLoading(true);
-        const response = await fetch('http://localhost:8080/api/oportunidades/todas');
-        
-        if (!response.ok) {
-          throw new Error(`Erro ${response.status}: ${response.statusText}`);
-        }
-        
-        const data = await response.json();
-        
-        const processedOpportunities = data.map(opportunity => ({
-          ...opportunity,
-          image: imageMap[opportunity.image] || imageMap['estagio.jpg'], // fallback image
-          status: getOpportunityStatus(opportunity.openingDate, opportunity.closingDate),
-          requirements: opportunity.requirements ? JSON.parse(opportunity.requirements) : []
-        }));
-        
-        setOpportunities(processedOpportunities);
-        setError(null);
-      } catch (err) {
-        console.error('Erro ao buscar oportunidades:', err);
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchOpportunities();
   }, []);
+
+  const handleCreateOpportunity = () => {
+    setEditingOpportunity(null);
+    setShowForm(true);
+  };
+
+  const handleEditOpportunity = (opportunity) => {
+    setEditingOpportunity(opportunity);
+    setShowForm(true);
+  };
+
+  const handleDeleteOpportunity = async (id) => {
+    try {
+      await deleteOportunidade(id);
+      await fetchOpportunities(); // Refresh the list
+    } catch (error) {
+      console.error('Erro ao deletar oportunidade:', error);
+      alert('Erro ao deletar oportunidade. Tente novamente.');
+    }
+  };
+
+  const handleSaveOpportunity = async (formData) => {
+    setFormLoading(true);
+    try {
+      if (editingOpportunity) {
+        // Update existing opportunity
+        await updateOportunidade(editingOpportunity.id, formData);
+      } else {
+        // Create new opportunity
+        await createOportunidade(formData);
+      }
+      
+      setShowForm(false);
+      setEditingOpportunity(null);
+      await fetchOpportunities(); // Refresh the list
+    } catch (error) {
+      console.error('Erro ao salvar oportunidade:', error);
+      alert('Erro ao salvar oportunidade. Tente novamente.');
+      throw error; // Re-throw to keep form open
+    } finally {
+      setFormLoading(false);
+    }
+  };
+
+  const handleCancelForm = () => {
+    setShowForm(false);
+    setEditingOpportunity(null);
+  };
 
   // ALTERADO: A lógica de filtro agora lida com o caso "Todas" para o status
   const filteredOpportunities = opportunities.filter((opportunity) => {
@@ -200,10 +257,24 @@ export default function Oportunidades() {
     <div className="opportunities-page">
       <div className="container">
         <header className="page-header">
-          <h1 className="page-title">Oportunidades Jurídicas</h1>
-          <p className="page-subtitle">
-            Descubra as melhores vagas de estágio, trainee, olimpíadas e concursos
-          </p>
+          <div className="header-content">
+            <div className="header-text">
+              <h1 className="page-title">Oportunidades Jurídicas</h1>
+              <p className="page-subtitle">
+                Descubra as melhores vagas de estágio, trainee, olimpíadas e concursos
+              </p>
+            </div>
+            {canManageOpportunities && (
+              <Button 
+                variant="primary" 
+                onClick={handleCreateOpportunity}
+                className="create-opportunity-btn"
+              >
+                <Plus size={20} />
+                Nova Oportunidade
+              </Button>
+            )}
+          </div>
         </header>
 
         <div className="filters-section">
@@ -266,7 +337,12 @@ export default function Oportunidades() {
           <div className="opportunities-grid">
             {filteredOpportunities.length > 0 ? (
               filteredOpportunities.map((opportunity) => (
-                <OpportunityCard key={opportunity.id} opportunity={opportunity} />
+                <OpportunityCard 
+                  key={opportunity.id} 
+                  opportunity={opportunity}
+                  onEdit={canManageOpportunities ? handleEditOpportunity : undefined}
+                  onDelete={canManageOpportunities ? handleDeleteOpportunity : undefined}
+                />
               ))
             ) : (
               <div className="no-results">
@@ -275,6 +351,13 @@ export default function Oportunidades() {
             )}
           </div>
         )}
+        
+        <OpportunityForm
+          opportunity={editingOpportunity}
+          onSave={handleSaveOpportunity}
+          onCancel={handleCancelForm}
+          isOpen={showForm}
+        />
       </div>
     </div>
   );

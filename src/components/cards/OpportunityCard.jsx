@@ -1,11 +1,12 @@
 // src/components/cards/OpportunityCard.jsx
-import { Clock, Building, MapPin, ExternalLink, Heart } from "lucide-react";
+import { Clock, Building, MapPin, ExternalLink, Heart, Edit, Trash2 } from "lucide-react";
 import Button from "../ui/button";
 import { useState } from "react";
 import { useFavorites } from '../../context/FavoritesContext';
+import { useAuth } from '../../context/AuthContext';
 import "./OpportunityCard.css";
 
-export default function OpportunityCard({ opportunity }) {
+export default function OpportunityCard({ opportunity, onEdit, onDelete }) {
   const {
     id,
     image,
@@ -22,9 +23,12 @@ export default function OpportunityCard({ opportunity }) {
   } = opportunity;
 
   const { isFavorite, toggleFavorite } = useFavorites();
+  const { hasAdminOrOrganizerRole } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
   
   const isSaved = isFavorite(id);
+  const canEdit = hasAdminOrOrganizerRole();
 
   const getStatusText = (status) => {
     if (status === 'Abertas') return 'Inscrições Abertas';
@@ -42,19 +46,61 @@ export default function OpportunityCard({ opportunity }) {
     }
   };
 
+  const handleEdit = () => {
+    if (onEdit) {
+      onEdit(opportunity);
+    }
+  };
+
+  const handleDelete = async () => {
+    if (window.confirm('Tem certeza que deseja excluir esta oportunidade?')) {
+      setIsDeleting(true);
+      try {
+        if (onDelete) {
+          await onDelete(id);
+        }
+      } finally {
+        setIsDeleting(false);
+      }
+    }
+  };
+
   return (
     <div className={`card opportunity-card status-border--${status}`}>
       <div className="opportunity-card__header">
         <div className="opportunity-card__image-wrapper">
           <img src={image || "/placeholder.svg"} alt={title} className="opportunity-card__image" />
-          <button 
-            className={`heart-button ${isSaved ? 'saved' : ''}`}
-            onClick={handleSaveToggle}
-            disabled={isLoading}
-            aria-label={isSaved ? 'Remover dos salvos' : 'Salvar oportunidade'}
-          >
-            <Heart size={20} fill={isSaved ? 'currentColor' : 'none'} />
-          </button>
+          <div className="card-actions">
+            <button 
+              className={`heart-button ${isSaved ? 'saved' : ''}`}
+              onClick={handleSaveToggle}
+              disabled={isLoading}
+              aria-label={isSaved ? 'Remover dos salvos' : 'Salvar oportunidade'}
+            >
+              <Heart size={20} fill={isSaved ? 'currentColor' : 'none'} />
+            </button>
+            {canEdit && (
+              <>
+                <button 
+                  className="edit-button"
+                  onClick={handleEdit}
+                  aria-label="Editar oportunidade"
+                  title="Editar oportunidade"
+                >
+                  <Edit size={18} />
+                </button>
+                <button 
+                  className="delete-button"
+                  onClick={handleDelete}
+                  disabled={isDeleting}
+                  aria-label="Excluir oportunidade"
+                  title="Excluir oportunidade"
+                >
+                  <Trash2 size={18} />
+                </button>
+              </>
+            )}
+          </div>
         </div>
         <div className="opportunity-card__info-bar">
           <span className="badge" data-type={type}>{type}</span>

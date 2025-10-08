@@ -35,7 +35,10 @@ export const login = (credentials) => api.post('/auth/login', credentials);
 
 // --- Funções de Oportunidades ---
 export const getOportunidades = (params) => api.get('/oportunidades', { params });
+export const createOportunidade = (data) => api.post('/oportunidades', data);
+export const updateOportunidade = (id, data) => api.put(`/oportunidades/${id}`, data);
+export const deleteOportunidade = (id) => api.delete(`/oportunidades/${id}`);
 
-// ... Outras funções (criar, deletar, favoritar) virão aqui ...
+// ... Outras funções (favoritar) virão aqui ...
 
 export default api;

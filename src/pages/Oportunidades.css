@@ -7,22 +7,55 @@
     background-color: var(--color-gray-900);
   }
   
-  .page-header { 
-    text-align: center; 
-    margin-bottom: 3rem; 
-    margin-top: 5rem
+  .page-header {
+  margin-bottom: 3rem;
+  margin-top: 5rem;
 }
-  .page-title {
-    font-size: 2.75rem;
-    font-weight: 700; 
-    color: var(--color-gray-900); 
-    margin-bottom: 1rem; 
+
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 2rem;
 }
-  .page-subtitle { 
-    font-size: 1.25rem; 
-    color: var(--color-gray-600); 
-    max-width: 48rem; 
-    margin: 0 auto; 
+
+.header-text {
+  text-align: center;
+  flex: 1;
+}
+
+.page-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--color-primary-900);
+  margin-bottom: 0.5rem;
+  background: linear-gradient(135deg, var(--color-primary-600), var(--color-primary-800));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.page-subtitle {
+  font-size: 1.125rem;
+  color: var(--color-gray-600);
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.create-opportunity-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  white-space: nowrap;
+  padding: 0.75rem 1.5rem;
+  font-weight: 600;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.create-opportunity-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
 }
   html.dark .page-title { 
     color: white; 
@@ -77,6 +110,21 @@
 /* =============================================== */
 
 @media (max-width: 768px) {
+  
+    .header-content {
+      flex-direction: column;
+      text-align: center;
+      gap: 1.5rem;
+    }
+    
+    .header-text {
+      text-align: center;
+    }
+    
+    .create-opportunity-btn {
+      width: 100%;
+      justify-content: center;
+    }
   
     /* 1. Torna as barras de filtro roláveis horizontalmente */
     .status-bar,
