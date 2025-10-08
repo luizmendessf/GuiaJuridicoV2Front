@@ -1,0 +1,34 @@
+/* src/components/layout/AnimatedBackground.css */
+
+.animated-background {
+    position: fixed;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+    z-index: -1;
+  }
+  
+  .bg-blob {
+    position: absolute;
+    border-radius: 9999px;
+    filter: blur(72px);
+    will-change: transform;
+    /* A transição suave evita movimentos bruscos */
+    transition: transform 0.5s linear; 
+  }
+  
+  .bg-blob.blob1 {
+    width: 24rem;
+    height: 24rem;
+    background: linear-gradient(to right, rgba(96, 165, 250, 0.06), rgba(56, 189, 248, 0.06));
+    animation: float 8s ease-in-out infinite;
+  }
+  
+  .bg-blob.blob2 {
+    width: 16rem;
+    height: 16rem;
+    background: linear-gradient(to right, rgba(56, 189, 248, 0.06), rgba(96, 165, 250, 0.06));
+    animation: float 12s ease-in-out infinite 2s;
+    right: 0;
+    bottom: 0;
+  }

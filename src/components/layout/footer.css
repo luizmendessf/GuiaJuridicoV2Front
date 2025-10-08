@@ -1,0 +1,142 @@
+/* Footer.css */
+
+.footer {
+    background-color: var(--color-gray-50);
+    border-top: 1px solid var(--color-gray-200);
+    padding: 3%;
+  }
+  
+  .footer__container {
+    padding-top: 3rem;
+    padding-bottom: 3rem;
+  }
+  
+  .footer__grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+  
+  .footer__main-column {
+    grid-column: span 1 / span 1;
+  }
+  
+  .footer__logo-link {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1rem;
+  }
+  
+  .footer__logo-img {
+    height: 4rem; /* 40px */
+    width: auto;
+  }
+  
+  .footer__description {
+    color: var(--color-gray-600);
+    margin-bottom: 1rem;
+    max-width: 28rem; /* 448px */
+  }
+  
+  .footer__socials {
+    display: flex;
+    gap: 1rem; /* space-x-4 */
+  }
+  
+  .footer__social-link {
+    color: var(--color-gray-400);
+    transition: color 0.2s ease-in-out;
+  }
+  .footer__social-link:hover {
+    color: var(--color-primary-600);
+  }
+  
+  .footer__heading {
+    font-size: 0.875rem; /* 14px */
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 1rem;
+    color: var(--color-gray-900);
+  }
+  
+  .footer__link-list,
+  .footer__contact-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem; /* space-y-2 */
+  }
+  
+  .footer__link {
+    color: var(--color-gray-600);
+    text-decoration: none;
+    transition: color 0.2s ease-in-out;
+  }
+  .footer__link:hover {
+    color: var(--color-primary-600);
+  }
+  
+  .footer__contact-item {
+    display: flex;
+    align-items: center;
+    color: var(--color-gray-600);
+  }
+  
+  .footer__contact-item svg {
+    margin-right: 0.5rem;
+  }
+  
+  .footer__bottom {
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--color-gray-200);
+  }
+  
+  .footer__copyright {
+    text-align: center;
+    color: var(--color-gray-500);
+  }
+  
+  /* Estilos Responsivos */
+  @media (min-width: 768px) {
+    .footer__grid {
+      grid-template-columns: repeat(4, 1fr);
+    }
+    .footer__main-column {
+      grid-column: span 2 / span 2;
+    }
+  }
+  
+  /* Estilos do Modo Escuro */
+  html.dark .footer {
+    background-color: var(--color-gray-900);
+    border-color: var(--color-gray-800);
+  }
+  
+  html.dark .footer__description,
+  html.dark .footer__link,
+  html.dark .footer__contact-item {
+    color: var(--color-gray-400);
+  }
+  
+  html.dark .footer__social-link {
+     color: var(--color-gray-400);
+  }
+  html.dark .footer__social-link:hover {
+    color: var(--color-primary-400);
+  }
+  
+  html.dark .footer__heading {
+    color: var(--color-white);
+  }
+  
+  html.dark .footer__bottom {
+    border-color: var(--color-gray-800);
+  }
+  
+  html.dark .footer__copyright {
+    color: var(--color-gray-400);
+  }

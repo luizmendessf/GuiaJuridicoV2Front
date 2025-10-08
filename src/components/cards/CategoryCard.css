@@ -1,0 +1,64 @@
+/* src/components/cards/CategoryCard.css */
+
+.category-card {
+    cursor: pointer;
+    text-align: center;
+    border: 0;
+  }
+  
+  .category-card:hover {
+    transform: translateY(-0.75rem); /* Aumenta o efeito de hover */
+  }
+  
+  .category-card .card__header {
+    padding-bottom: 1.5rem;
+  }
+  
+  .category-card__icon-wrapper {
+    margin: 0 auto 1rem;
+    width: 4rem;
+    height: 4rem;
+    border-radius: 9999px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    transition: transform 0.3s ease;
+  }
+  
+  .category-card:hover .category-card__icon-wrapper {
+    transform: scale(1.1);
+  }
+  
+  .category-card__icon {
+    width: 2rem;
+    height: 2rem;
+    color: white;
+  }
+  
+  .category-card__title {
+    font-size: 1.25rem;
+    background-image: linear-gradient(to right, var(--color-gray-900), var(--color-gray-700));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  
+  .category-card__count {
+    font-size: 0.875rem;
+    font-weight: 600;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  
+  /* Cores Gradientes para Categorias */
+  .from-primary { background-image: linear-gradient(to right, var(--color-primary-500), var(--color-primary-600)); }
+  .from-secondary { background-image: linear-gradient(to right, var(--color-secondary-500), #0284c7); }
+  .from-primary-secondary { background-image: linear-gradient(to right, var(--color-primary-600), var(--color-secondary-500)); }
+  .from-secondary-primary { background-image: linear-gradient(to right, #0284c7, var(--color-primary-500)); }
+  
+  /* Dark Mode */
+  html.dark .category-card__title {
+    background-image: linear-gradient(to right, white, var(--color-gray-300));
+  }

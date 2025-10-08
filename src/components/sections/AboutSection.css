@@ -1,0 +1,41 @@
+/* src/components/sections/AboutSection.css */
+
+.about-section {
+    background-color: white;
+  }
+  
+  .about__bg-image {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+    opacity: 0.05;
+  }
+  
+  .about__grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 3rem;
+    max-width: 64rem;
+    margin: 0 auto;
+  }
+  
+  /* Animações de entrada específicas */
+  body.animations-enabled .anim-slide-in-left {
+    animation: slideInLeft 1s both;
+  }
+  body.animations-enabled .anim-slide-in-right {
+    animation: slideInRight 1s both 0.2s;
+  }
+  
+  /* --- Media Queries & Dark Mode --- */
+  
+  @media (min-width: 768px) {
+    .about__grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  
+  html.dark .about-section {
+    background-color: var(--color-gray-900);
+  }

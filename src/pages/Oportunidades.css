@@ -1,0 +1,114 @@
+.opportunities-page {
+    background-color: var(--color-gray-50);
+    padding: 2rem 0;
+    min-height: 100vh;
+  }
+  html.dark .opportunities-page {
+    background-color: var(--color-gray-900);
+  }
+  
+  .page-header { 
+    text-align: center; 
+    margin-bottom: 3rem; 
+    margin-top: 5rem
+}
+  .page-title {
+    font-size: 2.75rem;
+    font-weight: 700; 
+    color: var(--color-gray-900); 
+    margin-bottom: 1rem; 
+}
+  .page-subtitle { 
+    font-size: 1.25rem; 
+    color: var(--color-gray-600); 
+    max-width: 48rem; 
+    margin: 0 auto; 
+}
+  html.dark .page-title { 
+    color: white; 
+}
+  html.dark .page-subtitle { 
+    color: var(--color-gray-300); 
+}
+  
+  .filters-section { 
+    margin-bottom: 2rem; 
+    display: flex; 
+    flex-direction: column; 
+    gap: 1rem; 
+}
+  .search-bar { position: relative; }
+  .search-bar__icon { position: absolute; left: 0.75rem; top: 50%; transform: translateY(-50%); color: var(--color-gray-400); }
+  .search-bar__input { width: 100%; padding: 0.75rem 0.75rem 0.75rem 2.5rem; font-size: 1.125rem; border-radius: 0.5rem; border: 1px solid var(--color-gray-300); }
+  .categories-bar { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+  
+  .results-count { margin-bottom: 1.5rem; color: var(--color-gray-600); }
+  html.dark .results-count { color: var(--color-gray-300); }
+  
+  .opportunities-grid { display: grid; grid-template-columns: 1fr; gap: 1.5rem; }
+  @media (min-width: 1024px) { .opportunities-grid { grid-template-columns: 1fr 1fr; } }
+  
+  .no-results { text-align: center; padding: 3rem 0; font-size: 1.25rem; color: var(--color-gray-500); grid-column: 1 / -1; }
+
+  /* código novo de status */
+  .status-bar { 
+    display: flex; 
+    flex-wrap: wrap; 
+    gap: 0.5rem;
+    margin-top: 1rem; /* NOVO: Adiciona margem para separar da busca */
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--color-gray-200);
+  }
+  html.dark .status-bar {
+    border-color: var(--color-gray-800);
+  }
+
+  .status-button,
+.category-button {
+  padding: 0.975rem 2rem; /* Deixa o botão menor */
+  font-size: 1rem; /* Diminui a fonte */
+  border-radius: 9999px; /* Deixa o botão no formato de "pílula" */
+  transition: all 0.2s ease; /* Adiciona uma transição suave */
+}
+
+
+/* =============================================== */
+/* AJUSTES PARA DISPOSITIVOS MÓVEIS (RESPONSIVO)   */
+/* =============================================== */
+
+@media (max-width: 768px) {
+  
+    /* 1. Torna as barras de filtro roláveis horizontalmente */
+    .status-bar,
+    .categories-bar {
+      flex-wrap: nowrap;          /* Impede que os botões quebrem a linha */
+      overflow-x: auto;           /* Adiciona a rolagem horizontal */
+      -webkit-overflow-scrolling: touch; /* Melhora a fluidez da rolagem em iOS */
+  
+      /* Opcional: Esconde a barra de rolagem visualmente */
+      -ms-overflow-style: none;   /* IE e Edge */
+      scrollbar-width: none;      /* Firefox */
+    }
+  
+    /* Esconde a barra de rolagem para Chrome, Safari e outros baseados em WebKit */
+    .status-bar::-webkit-scrollbar,
+    .categories-bar::-webkit-scrollbar {
+      display: none;
+    }
+  
+    /* 2. Diminui o tamanho dos botões em telas pequenas */
+    .status-button,
+    .category-button {
+      padding: 0.5rem 1.25rem; /* Padding menor para os botões */
+      font-size: 0.875rem;    /* Fonte um pouco menor */
+      flex-shrink: 0;         /* Impede que os botões encolham */
+    }
+  
+    /* 3. Ajusta o título para não ficar tão grande */
+    .page-title {
+      font-size: 2rem;
+    }
+    .page-subtitle {
+      font-size: 1.125rem;
+    }
+  }

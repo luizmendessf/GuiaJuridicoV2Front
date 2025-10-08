@@ -1,0 +1,126 @@
+
+.hero.hero-v1 {
+  position: relative;
+  padding: 8rem 0;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  min-height: 70vh; /* Garante altura mínima */
+  background-color: var(--color-gray-900);
+
+  /* Efeito de vinheta sobre a imagem de fundo */
+  background-image: 
+    linear-gradient(to left, rgb(0, 0, 0), transparent 70%),
+    linear-gradient(to right, rgb(0, 0, 0), transparent 60%),
+    radial-gradient(ellipse at center, transparent 50%, rgba(0, 0, 0, 0.766)),
+    radial-gradient(ellipse at center,  rgba(0, 0, 0, 0.7), transparent 40%),
+    url('../../assets/imagens/balanca.jpg');
+  
+  background-size: cover;
+  background-position: center;
+}
+
+.hero-v1 .hero__container {
+  display: flex;
+  justify-content: center;
+}
+
+.hero-v1 .hero__content {
+  max-width: 50rem; /* Limita a largura do texto */
+  opacity: 0;
+}
+
+.hero-v1 .hero__content.is-visible {
+  animation: slideUp 1s both 0.2s;
+}
+
+.hero-v1 .hero__badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.5rem 1rem;
+  background-color: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(5px);
+  border-radius: 9999px;
+  margin-bottom: 2rem;
+  animation: glow 3s ease-in-out infinite alternate;
+}
+
+.hero-v1 .hero__badge-icon {
+  color: var(--color-primary-300);
+  margin-right: 0.5rem;
+}
+
+.hero-v1 .hero__badge span {
+  color: var( --color-primary-500);
+}
+
+
+
+.hero-v1 .hero__title {
+  font-size: 3.5rem;
+  font-weight: 700;
+  line-height: 1.1;
+  margin-bottom: 1.5rem;
+  /* Usando uma cor sólida e brilhante para simplicidade e impacto */
+  color: white; 
+}
+
+.hero-v1 .hero__subtitle {
+  font-size: 1.25rem;
+  color: var(--color-gray-300);
+  margin-bottom: 2.5rem;
+}
+
+.hero-v1 .hero__actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+}
+
+.hero-v1 .button--outline {
+  border-color: rgba(255, 255, 255, 0.5);
+  color: white;
+}
+.hero-v1 .button--outline:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-color: white;
+}
+
+
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .hero.hero-v1 {
+    padding: 6rem 0;
+    min-height: 80vh;
+  }
+  .hero-v1 .hero__title {
+    font-size: 2.5rem;
+  }
+}
+
+
+
+/* Animação*/
+.hero__scroll-indicator {
+    position: absolute;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%); /* O wrapper só centraliza */
+    opacity: 0;
+  }
+  
+  .hero__scroll-indicator-inner {
+    color: rgba(255, 255, 255, 0.7);
+    animation-name: float; /* O elemento de dentro só anima */
+    animation-duration: 3s;
+    animation-timing-function: ease-in-out;
+    animation-iteration-count: infinite;
+  }
+  
+  .hero__scroll-indicator.is-visible {
+    animation: fadeIn 1s ease 1.5s forwards;
+  }

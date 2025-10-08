@@ -1,0 +1,254 @@
+.user-profile-page {
+  background-color: var(--color-gray-50);
+  padding: 2rem 0;
+  min-height: 100vh;
+  padding-top: 6rem;
+}
+
+html.dark .user-profile-page {
+  background-color: var(--color-gray-900);
+}
+
+/* Profile Header */
+.profile-header {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  margin-bottom: 3rem;
+  padding: 2rem;
+  background: white;
+  border-radius: 1rem;
+  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+}
+
+html.dark .profile-header {
+  background: var(--color-gray-800);
+  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.3), 0 1px 2px -1px rgb(0 0 0 / 0.3);
+}
+
+.profile-avatar {
+  width: 5rem;
+  height: 5rem;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--color-primary-500), var(--color-secondary-500));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  flex-shrink: 0;
+}
+
+.profile-info {
+  flex: 1;
+}
+
+.profile-name {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--color-gray-900);
+  margin: 0 0 0.5rem 0;
+}
+
+html.dark .profile-name {
+  color: white;
+}
+
+.profile-email {
+  font-size: 1.125rem;
+  color: var(--color-gray-600);
+  margin: 0;
+}
+
+html.dark .profile-email {
+  color: var(--color-gray-300);
+}
+
+/* Saved Opportunities Section */
+.saved-opportunities-section {
+  background: white;
+  border-radius: 1rem;
+  padding: 2rem;
+  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+}
+
+html.dark .saved-opportunities-section {
+  background: var(--color-gray-800);
+  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.3), 0 1px 2px -1px rgb(0 0 0 / 0.3);
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.section-title-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.section-icon {
+  color: var(--color-primary-500);
+}
+
+.section-title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--color-gray-900);
+  margin: 0;
+}
+
+html.dark .section-title {
+  color: white;
+}
+
+.opportunities-count {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: var(--color-gray-100);
+  border-radius: 2rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--color-gray-700);
+}
+
+html.dark .opportunities-count {
+  background: var(--color-gray-700);
+  color: var(--color-gray-300);
+}
+
+/* Saved Opportunities Grid */
+.saved-opportunities-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+}
+
+@media (min-width: 1024px) {
+  .saved-opportunities-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (min-width: 1280px) {
+  .saved-opportunities-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* Empty State */
+.no-saved-opportunities {
+  text-align: center;
+  padding: 4rem 2rem;
+  color: var(--color-gray-600);
+}
+
+html.dark .no-saved-opportunities {
+  color: var(--color-gray-400);
+}
+
+.empty-heart {
+  color: var(--color-gray-300);
+  margin-bottom: 1.5rem;
+}
+
+html.dark .empty-heart {
+  color: var(--color-gray-600);
+}
+
+.no-saved-opportunities h3 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  color: var(--color-gray-700);
+}
+
+html.dark .no-saved-opportunities h3 {
+  color: var(--color-gray-300);
+}
+
+.no-saved-opportunities p {
+  font-size: 1.125rem;
+  line-height: 1.6;
+  max-width: 32rem;
+  margin: 0 auto;
+}
+
+.loading-state {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 3rem 1rem;
+  color: var(--color-gray-600);
+}
+
+html.dark .loading-state {
+  color: var(--color-gray-400);
+}
+
+.loading-state p {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.link {
+  color: var(--color-primary-600);
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s ease;
+}
+
+.link:hover {
+  color: var(--color-primary-700);
+  text-decoration: underline;
+}
+
+html.dark .link {
+  color: var(--color-primary-400);
+}
+
+html.dark .link:hover {
+  color: var(--color-primary-300);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .user-profile-page {
+    padding: 1rem 0;
+    padding-top: 5rem;
+  }
+  
+  .profile-header {
+    flex-direction: column;
+    text-align: center;
+    gap: 1rem;
+    padding: 1.5rem;
+  }
+  
+  .profile-name {
+    font-size: 1.75rem;
+  }
+  
+  .section-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+  
+  .section-title {
+    font-size: 1.5rem;
+  }
+  
+  .saved-opportunities-section {
+    padding: 1.5rem;
+  }
+  
+  .no-saved-opportunities {
+    padding: 3rem 1rem;
+  }
+}

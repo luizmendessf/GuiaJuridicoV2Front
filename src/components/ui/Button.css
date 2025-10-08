@@ -1,0 +1,72 @@
+/* src/components/ui/Button.css */
+
+.button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.125rem;
+    font-weight: 600;
+    padding: 1rem 2rem;
+    border-radius: 0.5rem;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    transform-origin: center;
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    border: 2px solid transparent;
+    cursor: pointer;
+  }
+  
+  .button:hover {
+    transform: scale(1.05);
+    box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  }
+  
+  .button > svg { /* Icon */
+    margin-left: 0.5rem;
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+  
+  /* Variants */
+  .button--primary {
+    color: rgb(252, 247, 247);
+    background-image: linear-gradient(to right, var(--color-primary-600), var(--color-secondary-600));
+  }
+  .button--primary:hover {
+    background-image: linear-gradient(to right, var(--color-primary-700), var(--color-primary-700));
+  }
+  
+  .button--secondary {
+    color: var(--color-primary-600);
+    background-color: white;
+  }
+  .button--secondary:hover {
+    background-color: #f3f4f6;
+  }
+  
+  .button--outline {
+    border-color: var(--color-primary-300);
+    color: var(--color-primary-600);
+    background-color: transparent;
+  }
+  .button--outline:hover {
+    border-color: var(--color-primary-500);
+    background-color: var(--color-primary-50);
+  }
+  html.dark .button--outline {
+    border-color: var(--color-primary-500);
+    color: var(--color-primary-400);
+  }
+  html.dark .button--outline:hover {
+    background-color: rgba(30, 64, 175, 0.2);
+  }
+  
+  .button--outline-white {
+    border-color: white;
+    color: white;
+    background-color: transparent;
+  }
+  .button--outline-white:hover {
+    background-color: white;
+    color: var(--color-primary-600);
+  }
