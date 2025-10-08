@@ -5,7 +5,7 @@ import OpportunityCard from "../components/cards/OpportunityCard";
 import Button from "../components/ui/button";
 import "./Oportunidades.css";
 
-import opportunitiesData from '../data/oportunidade.json';
+// Removido: import opportunitiesData from '../data/oportunidade.json';
 //  ------IMAGENS------  //
 
 //padrões//
@@ -147,16 +147,40 @@ export default function Oportunidades() {
   const [opportunities, setOpportunities] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("Todos");
-  // ALTERADO: O filtro de status agora começa com "Todas" por padrão
   const [selectedStatus, setSelectedStatus] = useState("Todas");
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    const processedOpportunities = opportunitiesData.map(opportunity => ({
-      ...opportunity,
-      image: imageMap[opportunity.image],
-      status: getOpportunityStatus(opportunity.openingDate, opportunity.closingDate)
-    }));
-    setOpportunities(processedOpportunities);
+    const fetchOpportunities = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch('http://localhost:8080/api/oportunidades/todas');
+        
+        if (!response.ok) {
+          throw new Error(`Erro ${response.status}: ${response.statusText}`);
+        }
+        
+        const data = await response.json();
+        
+        const processedOpportunities = data.map(opportunity => ({
+          ...opportunity,
+          image: imageMap[opportunity.image] || imageMap['estagio.jpg'], // fallback image
+          status: getOpportunityStatus(opportunity.openingDate, opportunity.closingDate),
+          requirements: opportunity.requirements ? JSON.parse(opportunity.requirements) : []
+        }));
+        
+        setOpportunities(processedOpportunities);
+        setError(null);
+      } catch (err) {
+        console.error('Erro ao buscar oportunidades:', err);
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchOpportunities();
   }, []);
 
   // ALTERADO: A lógica de filtro agora lida com o caso "Todas" para o status
@@ -227,17 +251,30 @@ export default function Oportunidades() {
           </p>
         </div>
 
-        <div className="opportunities-grid">
-          {filteredOpportunities.length > 0 ? (
-            filteredOpportunities.map((opportunity) => (
-              <OpportunityCard key={opportunity.id} opportunity={opportunity} />
-            ))
-          ) : (
-            <div className="no-results">
-              <p>Nenhuma oportunidade encontrada com os filtros selecionados.</p>
-            </div>
-          )}
-        </div>
+        {loading ? (
+          <div className="loading-state">
+            <p>Carregando oportunidades...</p>
+          </div>
+        ) : error ? (
+          <div className="error-state">
+            <p>Erro ao carregar oportunidades: {error}</p>
+            <Button onClick={() => window.location.reload()} variant="primary">
+              Tentar Novamente
+            </Button>
+          </div>
+        ) : (
+          <div className="opportunities-grid">
+            {filteredOpportunities.length > 0 ? (
+              filteredOpportunities.map((opportunity) => (
+                <OpportunityCard key={opportunity.id} opportunity={opportunity} />
+              ))
+            ) : (
+              <div className="no-results">
+                <p>Nenhuma oportunidade encontrada com os filtros selecionados.</p>
+              </div>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );
