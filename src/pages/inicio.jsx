@@ -12,6 +12,7 @@ import CategoriesSection from "../components/sections/CategoriesSection";
 import AboutSection from "../components/sections/AboutSection";
 import CtaSection from "../components/sections/CtaSection";
 
+
 export default function Inicio() {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [isReady, setIsReady] = useState(false);
@@ -34,11 +35,11 @@ export default function Inicio() {
     <div className="homepage">
       <AnimatedBackground mousePosition={mousePosition} />
       
+      
       <main>
         <HeroSection isReady={isReady} />
-        <FeaturesSection isReady={isReady} />
-        <CategoriesSection isReady={isReady} />
-        <AboutSection isReady={isReady} />
+        <FeaturesSection />
+        <AboutSection />
         <CtaSection isReady={isReady} />
       </main>
     </div>

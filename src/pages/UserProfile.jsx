@@ -3,47 +3,18 @@ import React, { useState, useEffect, useContext } from 'react';
 import { User, Heart, Bookmark } from 'lucide-react';
 import OpportunityCard from '../components/cards/OpportunityCard';
 import { AuthContext } from '../context/AuthContext';
+import { useFavorites } from '../context/FavoritesContext';
 import './UserProfile.css';
 
 export default function UserProfile() {
-  const [savedOpportunities, setSavedOpportunities] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [user, setUser] = useState({
     name: 'Usuário',
     email: 'usuario@email.com'
   });
   const { authToken } = useContext(AuthContext);
-
-  // Load saved opportunities from backend
-  const loadSavedOpportunities = async () => {
-    if (!authToken) {
-      setLoading(false);
-      return;
-    }
-    
-    try {
-      const response = await fetch('http://localhost:8080/api/usuarios/me/favoritos', {
-        headers: {
-          'Authorization': `Bearer ${authToken}`,
-          'Content-Type': 'application/json'
-        }
-      });
-      
-      if (response.ok) {
-        const saved = await response.json();
-        setSavedOpportunities(saved);
-      } else {
-        console.error('Error loading saved opportunities');
-      }
-    } catch (error) {
-      console.error('Error:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const { favorites: savedOpportunities, loading } = useFavorites();
 
   useEffect(() => {
-    loadSavedOpportunities();
     
     // Get user info from localStorage or context
     const userInfo = JSON.parse(localStorage.getItem('userInfo') || '{}');
@@ -52,18 +23,7 @@ export default function UserProfile() {
     }
   }, [authToken]);
 
-  // Listen for changes in saved opportunities
-  useEffect(() => {
-    const handleCustomEvent = () => {
-      loadSavedOpportunities();
-    };
-    
-    window.addEventListener('savedOpportunitiesUpdated', handleCustomEvent);
 
-    return () => {
-      window.removeEventListener('savedOpportunitiesUpdated', handleCustomEvent);
-    };
-  }, []);
 
   return (
     <div className="user-profile-page">

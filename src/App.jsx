@@ -12,23 +12,28 @@ import Footer from "./components/layout/footer"; // Verifique se o nome do arqui
 // Importe o seu novo componente de rotas
 import AppRoutes from "./routes/AppRoutes";
 
-// Importe o AuthProvider
+// Importe o AuthProvider e FavoritesProvider
 import { AuthProvider } from "./context/AuthContext";
+import { FavoritesProvider } from "./context/FavoritesContext";
+
 
 function App() {
   return (
     <AuthProvider>
-      <Router >
-        {/* O Navbar e o Footer envolvem todas as rotas, aparecendo em todas as páginas. */}
-        <Navbar />
-        
-        {/* O miolo da sua aplicação agora é gerenciado pelo AppRoutes */}
-        <main>
-          <AppRoutes />
-        </main>
-        
-        <Footer />
-      </Router>
+      <FavoritesProvider>
+          <Router >
+
+            {/* O Navbar e o Footer envolvem todas as rotas, aparecendo em todas as páginas. */}
+            <Navbar />
+            
+            {/* O miolo da sua aplicação agora é gerenciado pelo AppRoutes */}
+            <main>
+              <AppRoutes />
+            </main>
+            
+            <Footer />
+          </Router>
+        </FavoritesProvider>
     </AuthProvider>
   );
 }

@@ -1,8 +1,8 @@
 // src/components/cards/OpportunityCard.jsx
 import { Clock, Building, MapPin, ExternalLink, Heart } from "lucide-react";
 import Button from "../ui/button";
-import { useState, useEffect, useContext } from "react";
-import { AuthContext } from '../../context/AuthContext';
+import { useState } from "react";
+import { useFavorites } from '../../context/FavoritesContext';
 import "./OpportunityCard.css";
 
 export default function OpportunityCard({ opportunity }) {
@@ -21,35 +21,10 @@ export default function OpportunityCard({ opportunity }) {
     status,
   } = opportunity;
 
-  const { authToken } = useContext(AuthContext);
-  const [isSaved, setIsSaved] = useState(false);
+  const { isFavorite, toggleFavorite } = useFavorites();
   const [isLoading, setIsLoading] = useState(false);
-
-  // Load saved state from backend on component mount
-  useEffect(() => {
-    if (authToken) {
-      checkIfSaved();
-    }
-  }, [id, authToken]);
-
-  // Function to check if opportunity is saved
-  const checkIfSaved = async () => {
-    try {
-      const response = await fetch('http://localhost:8080/api/usuarios/me/favoritos', {
-        headers: {
-          'Authorization': `Bearer ${authToken}`,
-          'Content-Type': 'application/json'
-        }
-      });
-      
-      if (response.ok) {
-        const savedOpportunities = await response.json();
-        setIsSaved(savedOpportunities.some(opp => opp.id === id));
-      }
-    } catch (error) {
-      console.error('Error checking saved status:', error);
-    }
-  };
+  
+  const isSaved = isFavorite(id);
 
   const getStatusText = (status) => {
     if (status === 'Abertas') return 'Inscrições Abertas';
@@ -58,34 +33,10 @@ export default function OpportunityCard({ opportunity }) {
   };
 
   const handleSaveToggle = async () => {
-    if (!authToken) {
-      alert('Você precisa estar logado para salvar oportunidades');
-      return;
-    }
-
     setIsLoading(true);
     
     try {
-      const url = `http://localhost:8080/api/usuarios/me/favoritos/${id}`;
-      const method = isSaved ? 'DELETE' : 'POST';
-      
-      const response = await fetch(url, {
-        method,
-        headers: {
-          'Authorization': `Bearer ${authToken}`,
-          'Content-Type': 'application/json'
-        }
-      });
-      
-      if (response.ok) {
-        setIsSaved(!isSaved);
-        // Dispatch custom event to notify other components
-        window.dispatchEvent(new CustomEvent('savedOpportunitiesUpdated'));
-      } else {
-        console.error('Error saving/unsaving opportunity');
-      }
-    } catch (error) {
-      console.error('Error:', error);
+      await toggleFavorite(id);
     } finally {
       setIsLoading(false);
     }
