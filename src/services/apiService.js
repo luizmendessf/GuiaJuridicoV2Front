@@ -3,7 +3,7 @@ import axios from 'axios';
 import { jwtDecode } from 'jwt-decode';
 
 const api = axios.create({
-  baseURL: 'http://localhost:8080/api'
+  baseURL: process.env.REACT_APP_API_URL || 'http://localhost:8080/api'
 });
 
 // Função para verificar se o token expirou

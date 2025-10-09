@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Menu, X, Sun, Moon, User, LogOut, Settings } from "lucide-react";
-import "./Navbar.css";
+import "./navbar.css";
 import { useAuth } from "../../context/AuthContext";
 
 // 1. IMPORTE OS LOGOS NO TOPO DO ARQUIVO

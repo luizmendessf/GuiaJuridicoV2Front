@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { Instagram, Linkedin, Mail } from "lucide-react"; // Removido o Phone que não era usado
-import "./Footer.css"; 
+import "./footer.css"; 
 import { useState, useEffect } from "react";
 
 // 1. IMPORTE AS IMAGENS AQUI NO TOPO
