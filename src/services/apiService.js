@@ -47,8 +47,14 @@ export const updateOportunidade = (id, data) => api.put(`/oportunidades/${id}`, 
 export const deleteOportunidade = (id) => api.delete(`/oportunidades/${id}`);
 
 // --- Funções de Usuário ---
+export const getUserProfile = () => api.get('/usuarios/me');
 export const updateUserProfile = (userData) => api.put('/usuarios/me', userData);
 export const changePassword = (passwordData) => api.post('/usuarios/me/mudar-senha', passwordData);
+
+// --- Funções de Administração ---
+export const getAllUsers = () => api.get('/admin/usuarios');
+export const deleteUser = (userId) => api.delete(`/admin/usuarios/${userId}`);
+export const updateUserRoles = (userId, roles) => api.put(`/admin/usuarios/${userId}/roles`, { nomesDasRoles: roles });
 
 // ... Outras funções (favoritar) virão aqui ...
 

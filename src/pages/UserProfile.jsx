@@ -5,25 +5,43 @@ import OpportunityCard from '../components/cards/OpportunityCard';
 import EditProfileModal from '../components/modals/EditProfileModal';
 import { AuthContext } from '../context/AuthContext';
 import { useFavorites } from '../context/FavoritesContext';
+import { getUserProfile } from '../services/apiService';
 import './UserProfile.css';
 
 export default function UserProfile() {
   const [user, setUser] = useState({
-    name: 'Usuário',
+    nome: 'Usuário',
     email: 'usuario@email.com'
   });
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [loading, setLoading] = useState(true);
   
   // Testando ambos os contextos
   const { authToken } = useContext(AuthContext);
-  const { favorites: savedOpportunities, loading } = useFavorites();
+  const { favorites: savedOpportunities, loading: favoritesLoading } = useFavorites();
 
   useEffect(() => {
-    // Get user info from localStorage or context
-    const userInfo = JSON.parse(localStorage.getItem('userInfo') || '{}');
-    if (userInfo.name || userInfo.email) {
-      setUser(userInfo);
-    }
+    const fetchUserProfile = async () => {
+      if (authToken) {
+        try {
+          const response = await getUserProfile();
+          setUser(response.data);
+        } catch (error) {
+          console.error('Erro ao buscar perfil do usuário:', error);
+          // Fallback para dados do localStorage se a API falhar
+          const userInfo = JSON.parse(localStorage.getItem('userInfo') || '{}');
+          if (userInfo.nome || userInfo.email) {
+            setUser(userInfo);
+          }
+        } finally {
+          setLoading(false);
+        }
+      } else {
+        setLoading(false);
+      }
+    };
+
+    fetchUserProfile();
   }, [authToken]);
 
 
@@ -37,7 +55,7 @@ export default function UserProfile() {
             <User size={48} />
           </div>
           <div className="profile-info">
-            <h1 className="profile-name">{user.name}</h1>
+            <h1 className="profile-name">{user.nome}</h1>
             <p className="profile-email">{user.email}</p>
           </div>
           <button 
@@ -62,7 +80,7 @@ export default function UserProfile() {
             </div>
           </div>
 
-          {loading ? (
+          {favoritesLoading ? (
             <div className="loading-state">
               <p>Carregando oportunidades salvas...</p>
             </div>
@@ -87,6 +105,13 @@ export default function UserProfile() {
           )}
         </div>
       </div>
+      
+      {/* Loading State */}
+      {loading && (
+        <div className="loading-container">
+          <p>Carregando perfil...</p>
+        </div>
+      )}
       
       {/* Edit Profile Modal */}
       <EditProfileModal 

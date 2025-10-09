@@ -80,13 +80,20 @@ export const AuthProvider = ({ children }) => {
     );
   };
 
+  // Função para verificar se o usuário é especificamente admin
+  const hasAdminRole = () => {
+    if (!user || !user.authorities) return false;
+    return user.authorities.some(auth => auth === 'ROLE_ADMIN');
+  };
+
   const value = {
     user,
     login,
     logout,
     isAuthenticated: !!user,
     authToken: getValidToken(),
-    hasAdminOrOrganizerRole
+    hasAdminOrOrganizerRole,
+    hasAdminRole
   };
 
   if (loading) {

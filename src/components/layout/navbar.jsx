@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Menu, X, Sun, Moon, User, LogOut } from "lucide-react";
+import { Menu, X, Sun, Moon, User, LogOut, Settings } from "lucide-react";
 import "./Navbar.css";
 import { useAuth } from "../../context/AuthContext";
 
@@ -26,7 +26,7 @@ export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [isDark, setIsDark] = useState(getInitialTheme());
-  const { user, logout } = useAuth();
+  const { user, logout, hasAdminRole } = useAuth();
 
   useEffect(() => {
     if (isDark) {
@@ -58,6 +58,7 @@ export default function Navbar() {
     { name: "Início", href: "/" },
     { name: "Oportunidades", href: "/oportunidades" },
     { name: "Sobre", href: "/sobre" },
+    ...(user && hasAdminRole() ? [{ name: "Administração", href: "/admin", icon: Settings }] : []),
   ];
 
   const authLinks = user ? [
@@ -90,6 +91,7 @@ export default function Navbar() {
         <div className="navbar__desktop-nav">
           {navigation.map((item) => (
             <Link key={item.name} to={item.href} className="navbar__desktop-link">
+              {item.icon && <item.icon size={16} />}
               {item.name}
               <span className="navbar__desktop-link-underline"></span>
             </Link>
@@ -146,6 +148,7 @@ export default function Navbar() {
                 className="navbar__mobile-link"
                 onClick={() => setIsOpen(false)}
               >
+                {item.icon && <item.icon size={16} />}
                 {item.name}
               </Link>
             ))}
