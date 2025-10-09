@@ -19,12 +19,18 @@ const isTokenExpired = (token) => {
 
 // Interceptador para adicionar o token JWT em todas as requisições autenticadas
 api.interceptors.request.use(async config => {
-  const token = localStorage.getItem('authToken');
-  if (token && !isTokenExpired(token)) {
-    config.headers.Authorization = `Bearer ${token}`;
-  } else if (token && isTokenExpired(token)) {
-    // Remove expired token from localStorage
-    localStorage.removeItem('authToken');
+  // Endpoints públicos que não precisam de autenticação
+  const publicEndpoints = ['/oportunidades/todas', '/auth/login', '/auth/register'];
+  const isPublicEndpoint = publicEndpoints.some(endpoint => config.url === endpoint || config.url.endsWith(endpoint));
+  
+  if (!isPublicEndpoint) {
+    const token = localStorage.getItem('authToken');
+    if (token && !isTokenExpired(token)) {
+      config.headers.Authorization = `Bearer ${token}`;
+    } else if (token && isTokenExpired(token)) {
+      // Remove expired token from localStorage
+      localStorage.removeItem('authToken');
+    }
   }
   return config;
 });
@@ -34,10 +40,15 @@ export const register = (userData) => api.post('/auth/register', userData);
 export const login = (credentials) => api.post('/auth/login', credentials);
 
 // --- Funções de Oportunidades ---
+export const getAllOportunidades = () => api.get('/oportunidades/todas');
 export const getOportunidades = (params) => api.get('/oportunidades', { params });
 export const createOportunidade = (data) => api.post('/oportunidades', data);
 export const updateOportunidade = (id, data) => api.put(`/oportunidades/${id}`, data);
 export const deleteOportunidade = (id) => api.delete(`/oportunidades/${id}`);
+
+// --- Funções de Usuário ---
+export const updateUserProfile = (userData) => api.put('/usuarios/me', userData);
+export const changePassword = (passwordData) => api.post('/usuarios/me/mudar-senha', passwordData);
 
 // ... Outras funções (favoritar) virão aqui ...
 

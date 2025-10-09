@@ -47,9 +47,20 @@ const OpportunityForm = ({ opportunity = null, onSave, onCancel, isOpen }) => {
         company: opportunity.company || '',
         location: opportunity.location || '',
         description: opportunity.description || '',
-        requirements: Array.isArray(opportunity.requirements) 
-          ? opportunity.requirements.join('\n') 
-          : opportunity.requirements || '',
+        requirements: (() => {
+          if (!opportunity.requirements) return '';
+          if (typeof opportunity.requirements === 'string') {
+            try {
+              const parsed = JSON.parse(opportunity.requirements);
+              return Array.isArray(parsed) ? parsed.join('\n') : opportunity.requirements;
+            } catch {
+              return opportunity.requirements;
+            }
+          }
+          return Array.isArray(opportunity.requirements) 
+            ? opportunity.requirements.join('\n') 
+            : opportunity.requirements;
+        })(),
         salary: opportunity.salary || '',
         applicationLink: opportunity.applicationLink || '',
         type: opportunity.type || 'Estágio',
@@ -107,8 +118,8 @@ const OpportunityForm = ({ opportunity = null, onSave, onCancel, isOpen }) => {
       const submitData = {
         ...formData,
         requirements: formData.requirements 
-          ? formData.requirements.split('\n').filter(req => req.trim()) 
-          : []
+          ? JSON.stringify(formData.requirements.split('\n').filter(req => req.trim()))
+          : JSON.stringify([])
       };
       
       await onSave(submitData);
@@ -348,7 +359,9 @@ const OpportunityForm = ({ opportunity = null, onSave, onCancel, isOpen }) => {
               {loading ? 'Salvando...' : (
                 <>
                   <Save size={16} />
-                  {opportunity ? 'Atualizar' : 'Criar'}
+                  <span style={{ marginLeft: '0.5rem' }}>
+                    {opportunity ? 'Atualizar' : 'Criar'}
+                  </span>
                 </>
               )}
             </Button>

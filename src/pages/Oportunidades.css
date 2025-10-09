@@ -24,15 +24,30 @@
   flex: 1;
 }
 
+/* Quando há botão de criar oportunidade, alinha o texto à esquerda */
+.header-content:has(.create-opportunity-btn) .header-text {
+  text-align: left;
+}
+
 .page-title {
-  font-size: 2.5rem;
+  font-size: 3rem;
   font-weight: 700;
   color: var(--color-primary-900);
-  margin-bottom: 0.5rem;
+  margin-bottom: 1rem;
   background: linear-gradient(135deg, var(--color-primary-600), var(--color-primary-800));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+  text-align: center;
+  line-height: 1.2;
+  display: block;
+  width: 100%;
+}
+
+/* Quando há botão de criar oportunidade, alinha o título à esquerda */
+.header-content:has(.create-opportunity-btn) .page-title {
+  text-align: left;
+  margin: 0;
 }
 
 .page-subtitle {
@@ -40,6 +55,17 @@
   color: var(--color-gray-600);
   max-width: 600px;
   margin: 0 auto;
+  text-align: center;
+  line-height: 1.6;
+  display: block;
+  width: 100%;
+}
+
+/* Quando há botão de criar oportunidade, alinha o subtítulo à esquerda */
+.header-content:has(.create-opportunity-btn) .page-subtitle {
+  text-align: left;
+  margin: 0;
+  max-width: none;
 }
 
 .create-opportunity-btn {
@@ -154,9 +180,9 @@
   
     /* 3. Ajusta o título para não ficar tão grande */
     .page-title {
-      font-size: 2rem;
+      font-size: 2.5rem;
     }
     .page-subtitle {
-      font-size: 1.125rem;
+      font-size: 1rem;
     }
   }

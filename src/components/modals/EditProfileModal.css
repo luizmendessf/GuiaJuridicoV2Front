@@ -1,0 +1,293 @@
+/* src/components/modals/EditProfileModal.css */
+
+.edit-profile-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 1rem;
+}
+
+.edit-profile-modal {
+  background: white;
+  border-radius: 0.75rem;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  width: 100%;
+  max-width: 500px;
+  max-height: 90vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.edit-profile-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.5rem 2rem;
+  border-bottom: 1px solid #e2e8f0;
+  background: #f8fafc;
+}
+
+.edit-profile-header h2 {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.close-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border: none;
+  background: none;
+  border-radius: 0.375rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  color: #475569;
+}
+
+.close-button:hover {
+  background-color: #f1f5f9;
+  color: #1e293b;
+}
+
+.edit-profile-form {
+  padding: 2rem;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+.form-group label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+  color: #1e293b;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #94a3b8;
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  background-color: #ffffff;
+  color: #0f172a;
+}
+
+.form-group input:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+}
+
+.form-group input:disabled {
+  background-color: #f8fafc;
+  color: #475569;
+  cursor: not-allowed;
+}
+
+.form-group input.error {
+  border-color: #ef4444;
+}
+
+.disabled-field {
+  background-color: #f1f5f9 !important;
+  color: #64748b !important;
+  cursor: not-allowed !important;
+}
+
+.password-section {
+  border-top: 1px solid #e2e8f0;
+  padding-top: 1.5rem;
+  margin-top: 1.5rem;
+}
+
+.password-toggle {
+  margin-bottom: 1rem;
+}
+
+.password-toggle label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 500;
+  color: #1e293b;
+  cursor: pointer;
+}
+
+.password-toggle input[type="checkbox"] {
+  width: auto;
+  margin: 0;
+}
+
+.password-input-wrapper {
+  position: relative;
+}
+
+.password-input-wrapper input {
+  padding-right: 3rem;
+}
+
+.password-toggle-btn {
+  position: absolute;
+  right: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #64748b;
+  padding: 0.25rem;
+  border-radius: 0.25rem;
+  transition: color 0.2s;
+}
+
+.password-toggle-btn:hover {
+  color: #1e293b;
+}
+
+.password-toggle-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.error-message {
+  display: block;
+  font-size: 0.75rem;
+  color: #ef4444;
+  margin-top: 0.25rem;
+}
+
+.general-error {
+  background-color: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 0.375rem;
+  padding: 0.75rem;
+  margin-bottom: 1rem;
+  font-size: 0.875rem;
+}
+
+.form-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+  padding-top: 1.5rem;
+  border-top: 1px solid #e2e8f0;
+  margin-top: 1.5rem;
+}
+
+/* Dark mode support */
+html.dark .edit-profile-modal {
+  background: #0f172a;
+  color: #f1f5f9;
+}
+
+html.dark .edit-profile-header {
+  background: #020617;
+  border-bottom-color: #334155;
+}
+
+html.dark .edit-profile-header h2 {
+  color: #f1f5f9;
+}
+
+html.dark .close-button {
+  color: #94a3b8;
+}
+
+html.dark .close-button:hover {
+  background-color: #1e293b;
+  color: #e2e8f0;
+}
+
+html.dark .form-group label {
+  color: #e2e8f0;
+}
+
+html.dark .form-group input {
+  background-color: #1e293b;
+  border-color: #475569;
+  color: #f1f5f9;
+}
+
+html.dark .form-group input:focus {
+  border-color: #60a5fa;
+  box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.15);
+}
+
+html.dark .form-group input:disabled,
+html.dark .disabled-field {
+  background-color: #0f172a !important;
+  color: #64748b !important;
+}
+
+html.dark .password-section {
+  border-top-color: #334155;
+}
+
+html.dark .password-toggle label {
+  color: #e2e8f0;
+}
+
+html.dark .password-toggle-btn {
+  color: #94a3b8;
+}
+
+html.dark .password-toggle-btn:hover {
+  color: #e2e8f0;
+}
+
+html.dark .general-error {
+  background-color: #1f1f23;
+  border-color: #dc2626;
+  color: #fca5a5;
+}
+
+html.dark .form-actions {
+  border-top-color: #334155;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .edit-profile-overlay {
+    padding: 0.5rem;
+  }
+  
+  .edit-profile-modal {
+    max-height: 95vh;
+  }
+  
+  .edit-profile-header {
+    padding: 1rem 1.5rem;
+  }
+  
+  .edit-profile-form {
+    padding: 1.5rem;
+  }
+  
+  .form-actions {
+    flex-direction: column;
+  }
+  
+  .form-actions button {
+    width: 100%;
+  }
+}

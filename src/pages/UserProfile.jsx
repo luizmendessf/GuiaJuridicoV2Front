@@ -1,7 +1,8 @@
 // src/pages/UserProfile.jsx
 import React, { useState, useEffect, useContext } from 'react';
-import { User, Heart, Bookmark } from 'lucide-react';
+import { User, Heart, Bookmark, Edit } from 'lucide-react';
 import OpportunityCard from '../components/cards/OpportunityCard';
+import EditProfileModal from '../components/modals/EditProfileModal';
 import { AuthContext } from '../context/AuthContext';
 import { useFavorites } from '../context/FavoritesContext';
 import './UserProfile.css';
@@ -11,6 +12,7 @@ export default function UserProfile() {
     name: 'Usuário',
     email: 'usuario@email.com'
   });
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   
   // Testando ambos os contextos
   const { authToken } = useContext(AuthContext);
@@ -38,6 +40,13 @@ export default function UserProfile() {
             <h1 className="profile-name">{user.name}</h1>
             <p className="profile-email">{user.email}</p>
           </div>
+          <button 
+            className="edit-profile-btn"
+            onClick={() => setIsEditModalOpen(true)}
+            title="Editar perfil"
+          >
+            <Edit size={20} />
+          </button>
         </div>
 
         {/* Saved Opportunities Section */}
@@ -78,6 +87,18 @@ export default function UserProfile() {
           )}
         </div>
       </div>
+      
+      {/* Edit Profile Modal */}
+      <EditProfileModal 
+        user={user}
+        isOpen={isEditModalOpen}
+        onClose={() => setIsEditModalOpen(false)}
+        onUpdate={(updatedUser) => {
+          setUser(updatedUser);
+          // Atualizar também no localStorage
+          localStorage.setItem('userInfo', JSON.stringify(updatedUser));
+        }}
+      />
     </div>
   );
 }

@@ -40,26 +40,35 @@
   html.dark .hero__badge-icon { color: var(--color-primary-400); }
   
   .about-hero__title {
-    font-size: 2.75rem;
+    font-size: 3rem;
     font-weight: 700;
     margin-bottom: 1.5rem;
     background-image: linear-gradient(to right, var(--color-gray-900), var(--color-gray-700));
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
+    text-align: center;
+    line-height: 1.2;
     animation: slideUp 1s both;
+    display: block;
+    width: 100%;
   }
   html.dark .about-hero__title { background-image: linear-gradient(to right, white, var(--color-gray-300)); }
   
   .about-hero__subtitle {
-    font-size: 1.25rem;
+    font-size: 1.125rem;
     color: var(--color-gray-600);
     max-width: 48rem;
     margin: 0 auto;
+    text-align: center;
+    line-height: 1.6;
     animation: slideUp 1s both 0.2s;
+    display: block;
+    width: 100%;
   }
   html.dark .about-hero__subtitle { color: var(--color-gray-300); }
   
   @media (min-width: 768px) {
-    .about-hero__title { font-size: 3.25rem; }
+    .about-hero__title { font-size: 3.5rem; }
+    .about-hero__subtitle { font-size: 1.25rem; }
   }

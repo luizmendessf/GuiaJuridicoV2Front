@@ -4,6 +4,17 @@
     background-color: white;
   }
   
+  /* Estilo específico para o título da seção About */
+  .about-section .section-title {
+    font-size: 2.5rem !important;
+  }
+  
+  @media (min-width: 768px) {
+    .about-section .section-title {
+      font-size: 3rem !important;
+    }
+  }
+  
   .about__bg-image {
     position: absolute;
     inset: 0;

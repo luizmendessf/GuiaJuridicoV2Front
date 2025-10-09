@@ -4,6 +4,16 @@
   html.dark .team-section {
     background: linear-gradient(to bottom right, var(--color-gray-800), rgba(23, 37, 84, 0.2));
   }
+  
+  .team-section .section-title {
+    font-size: 2.5rem !important;
+  }
+  
+  @media (min-width: 768px) {
+    .team-section .section-title {
+      font-size: 3rem !important;
+    }
+  }
   .team__grid {
     display: grid;
     grid-template-columns: 1fr;

@@ -30,19 +30,25 @@
   /* 1. ESTILO BASE PARA TODOS OS NAVEGADORES */
   /* O título terá uma cor sólida por padrão. */
   .section-title {
-    font-size: 2.25rem;
+    font-size: 4rem;
     font-weight: 700;
-    margin-bottom: 1rem;
-    color: var(--color-gray-900); /* Cor sólida padrão para modo claro */
+    margin-bottom: 1.5rem;
+    color: rgb(0, 0, 0); /* Cor sólida padrão para modo claro */
+    text-align: center;
+    line-height: 1.2;
+    display: block;
+    width: 100%;
   }
   
- 
-  
   .section-subtitle {
-    font-size: 1.25rem;
+    font-size: 1.125rem;
     color: var(--color-gray-600);
     max-width: 48rem;
     margin: 0 auto;
+    text-align: center;
+    line-height: 1.6;
+    display: block;
+    width: 100%;
   }
   
   .section__bg-image,
@@ -61,8 +67,20 @@
   
   @media (min-width: 768px) {
     .section-title {
-      font-size: 2.75rem;
+      font-size: 5rem;
     }
+    .section-subtitle {
+      font-size: 1.25rem;
+    }
+  }
+  
+  /* Dark mode styles */
+  html.dark .section-title {
+    color: white;
+  }
+  
+  html.dark .section-subtitle {
+    color: var(--color-gray-300);
   }
   
  

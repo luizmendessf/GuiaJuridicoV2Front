@@ -16,6 +16,16 @@
     gap: 3rem;
   }
   
+  .contact-section .section-title {
+    font-size: 2.5rem !important;
+  }
+  
+  @media (min-width: 768px) {
+    .contact-section .section-title {
+      font-size: 3rem !important;
+    }
+  }
+  
   .contact-section__subtitle {
     font-size: 1.125rem;
     color: var(--color-gray-600);

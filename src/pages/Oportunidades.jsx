@@ -5,7 +5,7 @@ import OpportunityCard from "../components/cards/OpportunityCard";
 import OpportunityForm from "../components/forms/OpportunityForm";
 import Button from "../components/ui/button";
 import { useAuth } from "../context/AuthContext";
-import { createOportunidade, updateOportunidade, deleteOportunidade } from "../services/apiService";
+import { getAllOportunidades, createOportunidade, updateOportunidade, deleteOportunidade } from "../services/apiService";
 import "./Oportunidades.css";
 
 // Removido: import opportunitiesData from '../data/oportunidade.json';
@@ -163,13 +163,8 @@ export default function Oportunidades() {
   const fetchOpportunities = async () => {
     try {
       setLoading(true);
-      const response = await fetch('http://localhost:8080/api/oportunidades/todas');
-      
-      if (!response.ok) {
-        throw new Error(`Erro ${response.status}: ${response.statusText}`);
-      }
-      
-      const data = await response.json();
+      const response = await getAllOportunidades();
+      const data = response.data;
       
       const processedOpportunities = data.map(opportunity => ({
         ...opportunity,
@@ -182,7 +177,7 @@ export default function Oportunidades() {
       setError(null);
     } catch (err) {
       console.error('Erro ao buscar oportunidades:', err);
-      setError(err.message);
+      setError(err.response?.data?.message || err.message || 'Erro ao carregar oportunidades');
     } finally {
       setLoading(false);
     }

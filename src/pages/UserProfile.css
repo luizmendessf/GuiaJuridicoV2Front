@@ -19,6 +19,7 @@ html.dark .user-profile-page {
   background: white;
   border-radius: 1rem;
   box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+  position: relative;
 }
 
 html.dark .profile-header {
@@ -49,6 +50,34 @@ html.dark .profile-header {
   margin: 0 0 0.5rem 0;
 }
 
+.edit-profile-btn {
+  position: absolute;
+  top: 1.5rem;
+  right: 1.5rem;
+  background: var(--color-primary-500);
+  color: white;
+  border: none;
+  border-radius: 0.5rem;
+  padding: 0.75rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.edit-profile-btn:hover {
+  background: var(--color-primary-600);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.edit-profile-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
 html.dark .profile-name {
   color: white;
 }
@@ -61,6 +90,14 @@ html.dark .profile-name {
 
 html.dark .profile-email {
   color: var(--color-gray-300);
+}
+
+html.dark .edit-profile-btn {
+  background: var(--color-primary-600);
+}
+
+html.dark .edit-profile-btn:hover {
+  background: var(--color-primary-500);
 }
 
 /* Saved Opportunities Section */
