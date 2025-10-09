@@ -1,5 +1,6 @@
 // src/context/FavoritesContext.jsx
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import api from '../services/apiService';
 import { AuthContext } from './AuthContext';
 
 // Import images for mapping
@@ -115,15 +116,14 @@ export const FavoritesProvider = ({ children }) => {
 
     setLoading(true);
     try {
-      const response = await fetch('http://localhost:8080/api/usuarios/me/favoritos', {
+      const response = await api.get('/usuarios/me/favoritos', {
         headers: {
-          'Authorization': `Bearer ${authToken}`,
-          'Content-Type': 'application/json'
+          Authorization: `Bearer ${authToken}`
         }
       });
       
-      if (response.ok) {
-        const savedOpportunities = await response.json();
+      if (response.status === 200) {
+        const savedOpportunities = response.data;
         // Process requirements field from JSON string to array and map images
         const processedOpportunities = savedOpportunities.map(opportunity => ({
           ...opportunity,
@@ -156,22 +156,19 @@ export const FavoritesProvider = ({ children }) => {
     }
 
     try {
-      const response = await fetch(`http://localhost:8080/api/usuarios/me/favoritos/${opportunityId}`, {
-        method: 'POST',
+      const response = await api.post(`/usuarios/me/favoritos/${opportunityId}`, null, {
         headers: {
-          'Authorization': `Bearer ${authToken}`,
-          'Content-Type': 'application/json'
+          Authorization: `Bearer ${authToken}`
         }
       });
       
-      if (response.ok) {
+      if (response.status === 200 || response.status === 201) {
         // Refresh favorites list
         await fetchFavorites();
         return true;
       } else {
-        const errorText = await response.text();
-        console.error('Error adding favorite:', response.status, errorText);
-        alert(`Erro ${response.status}: ${errorText || 'Falha ao salvar oportunidade'}`);
+        console.error('Error adding favorite:', response.status, response.data);
+        alert(`Erro ${response.status}: ${response.data || 'Falha ao salvar oportunidade'}`);
         return false;
       }
     } catch (error) {
@@ -188,22 +185,19 @@ export const FavoritesProvider = ({ children }) => {
     }
 
     try {
-      const response = await fetch(`http://localhost:8080/api/usuarios/me/favoritos/${opportunityId}`, {
-        method: 'DELETE',
+      const response = await api.delete(`/usuarios/me/favoritos/${opportunityId}`, {
         headers: {
-          'Authorization': `Bearer ${authToken}`,
-          'Content-Type': 'application/json'
+          Authorization: `Bearer ${authToken}`
         }
       });
       
-      if (response.ok) {
+      if (response.status === 200 || response.status === 204) {
         // Refresh favorites list
         await fetchFavorites();
         return true;
       } else {
-        const errorText = await response.text();
-        console.error('Error removing favorite:', response.status, errorText);
-        alert(`Erro ${response.status}: ${errorText || 'Falha ao remover oportunidade'}`);
+        console.error('Error removing favorite:', response.status, response.data);
+        alert(`Erro ${response.status}: ${response.data || 'Falha ao remover oportunidade'}`);
         return false;
       }
     } catch (error) {
