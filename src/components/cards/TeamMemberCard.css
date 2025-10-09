@@ -2,10 +2,11 @@
     border: 0;
     transition: all 0.5s ease;
     width: 80%;
+    box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.25);
   }
   .team-card:hover {
     transform: translateY(-0.75rem);
-    box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.25);
+    box-shadow: 0 35px 70px -12px rgb(0 0 0 / 0.35);
   }
   .team-card__header {
     position: relative;
