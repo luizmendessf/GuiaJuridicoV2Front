@@ -1,0 +1,74 @@
+/* src/components/sections/about/AboutHeroSection.css */
+.about-hero-section {
+    position: relative;
+    background: linear-gradient(to bottom right, var(--color-primary-50), white, #f0f9ff);
+    padding: 5rem 0;
+    overflow: hidden;
+    text-align: center;
+    margin-top: 3rem;
+  }
+  html.dark .about-hero-section {
+    background: linear-gradient(to bottom right, var(--color-gray-800), var(--color-gray-900), var(--color-gray-800));
+  }
+  
+  .about-hero__bg-image {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+    opacity: 0.05;
+  }
+  
+  .about-hero__container {
+    position: relative;
+  }
+  
+  /* Reutilizando o estilo do badge da Home Page, mas pode ser separado se necessário */
+  .hero__badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.5rem 1rem;
+    background-image: linear-gradient(to right, var(--color-primary-100), #e0f2fe);
+    border-radius: 9999px;
+    margin-bottom: 1.5rem;
+    animation: glow 2s ease-in-out infinite alternate;
+  }
+  .hero__badge-icon { width: 1rem; height: 1rem; color: var(--color-primary-600); margin-right: 0.5rem; }
+  .hero__badge span { font-size: 0.875rem; font-weight: 500; color: var(--color-primary-700); }
+  html.dark .hero__badge { background-image: linear-gradient(to right, var(--color-primary-900), #082f49); }
+  html.dark .hero__badge span { color: var(--color-primary-300); }
+  html.dark .hero__badge-icon { color: var(--color-primary-400); }
+  
+  .about-hero__title {
+    font-size: 3rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    background-image: linear-gradient(to right, var(--color-gray-900), var(--color-gray-700));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    text-align: center;
+    line-height: 1.2;
+    animation: slideUp 1s both;
+    display: block;
+    width: 100%;
+  }
+  html.dark .about-hero__title { background-image: linear-gradient(to right, white, var(--color-gray-300)); }
+  
+  .about-hero__subtitle {
+    font-size: 1.125rem;
+    color: var(--color-gray-600);
+    max-width: 48rem;
+    margin: 0 auto;
+    text-align: center;
+    line-height: 1.6;
+    animation: slideUp 1s both 0.2s;
+    display: block;
+    width: 100%;
+  }
+  html.dark .about-hero__subtitle { color: var(--color-gray-300); }
+  
+  @media (min-width: 768px) {
+    .about-hero__title { font-size: 3.5rem; }
+    .about-hero__subtitle { font-size: 1.25rem; }
+  }

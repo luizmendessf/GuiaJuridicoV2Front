@@ -46,6 +46,18 @@ export const createOportunidade = (data) => api.post('/oportunidades', data);
 export const updateOportunidade = (id, data) => api.put(`/oportunidades/${id}`, data);
 export const deleteOportunidade = (id) => api.delete(`/oportunidades/${id}`);
 
+// --- Imagens ---
+export const uploadImage = (file) => {
+  const formData = new FormData();
+  formData.append('file', file);
+  return api.post('/images/upload', formData, {
+    headers: { 'Content-Type': 'multipart/form-data' }
+  });
+};
+
+// --- Oportunidade por ID ---
+export const getOportunidadeById = (id) => api.get(`/oportunidades/${id}`);
+
 // --- Funções de Usuário ---
 export const getUserProfile = () => api.get('/usuarios/me');
 export const updateUserProfile = (userData) => api.put('/usuarios/me', userData);

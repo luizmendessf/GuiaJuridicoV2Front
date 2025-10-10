@@ -1,8 +1,10 @@
 import { Routes, Route, Navigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
 // Importe todas as suas páginas aqui
 import Inicio from "../pages/inicio";
 import Oportunidades from "../pages/Oportunidades";
+import OpportunityEditorPage from "../pages/OpportunityEditorPage";
 import Sobre from "../pages/Sobre";
 import LoginPage from "../pages/LoginPage";
 import RegisterPage from "../pages/RegisterPage";
@@ -28,6 +30,19 @@ const AdminRoute = ({ children }) => {
   return children;
 };
 
+// Componente para rotas que requerem permissão de Organizador/Admin
+const OrganizerOrAdminRoute = ({ children }) => {
+  const { hasAdminOrOrganizerRole } = useAuth();
+  const token = localStorage.getItem('authToken');
+  if (!token) {
+    return <Navigate to="/login" replace />;
+  }
+  if (!hasAdminOrOrganizerRole()) {
+    return <Navigate to="/" replace />;
+  }
+  return children;
+};
+
 export default function AppRoutes() {
   return (
     <Routes>
@@ -36,6 +51,16 @@ export default function AppRoutes() {
       
       {/* Outras rotas */}
       <Route path="/oportunidades" element={<Oportunidades />} />
+      <Route path="/oportunidades/nova" element={
+        <OrganizerOrAdminRoute>
+          <OpportunityEditorPage mode="create" />
+        </OrganizerOrAdminRoute>
+      } />
+      <Route path="/oportunidades/:id/editar" element={
+        <OrganizerOrAdminRoute>
+          <OpportunityEditorPage mode="edit" />
+        </OrganizerOrAdminRoute>
+      } />
       <Route path="/sobre" element={<Sobre />} />
       
       {/* Rotas de autenticação */}
