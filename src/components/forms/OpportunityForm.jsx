@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { X, Save, Calendar, Building, MapPin, DollarSign, ExternalLink, FileText, Tag, Image } from 'lucide-react';
 import Button from '../ui/button';
 import './OpportunityForm.css';
+import { uploadImage } from '../../services/apiService';
 
 const OpportunityForm = ({ opportunity = null, onSave, onCancel, isOpen }) => {
   const [formData, setFormData] = useState({
@@ -21,6 +22,8 @@ const OpportunityForm = ({ opportunity = null, onSave, onCancel, isOpen }) => {
   
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
+  const [imageFile, setImageFile] = useState(null);
+  const [previewUrl, setPreviewUrl] = useState(null);
 
   const opportunityTypes = [
     'Estágio',
@@ -70,6 +73,17 @@ const OpportunityForm = ({ opportunity = null, onSave, onCancel, isOpen }) => {
       });
     }
   }, [opportunity]);
+
+  const handleFileChange = (e) => {
+    const file = e.target.files?.[0] || null;
+    setImageFile(file);
+    if (file) {
+      const url = URL.createObjectURL(file);
+      setPreviewUrl(url);
+    } else {
+      setPreviewUrl(null);
+    }
+  };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -121,6 +135,19 @@ const OpportunityForm = ({ opportunity = null, onSave, onCancel, isOpen }) => {
           ? JSON.stringify(formData.requirements.split('\n').filter(req => req.trim()))
           : JSON.stringify([])
       };
+      // Se houver arquivo de imagem selecionado, faz upload antes de salvar
+      if (imageFile) {
+        try {
+          const response = await uploadImage(imageFile);
+          const uploadedUrl = response.data?.url || response.data;
+          if (uploadedUrl) {
+            submitData.image = uploadedUrl;
+          }
+        } catch (err) {
+          console.error('Falha no upload da imagem:', err);
+          setErrors(prev => ({ ...prev, image: 'Falha ao enviar imagem. Tente novamente.' }));
+        }
+      }
       
       await onSave(submitData);
     } catch (error) {
@@ -241,6 +268,22 @@ const OpportunityForm = ({ opportunity = null, onSave, onCancel, isOpen }) => {
                   <option key={option.value} value={option.value}>{option.label}</option>
                 ))}
               </select>
+              <div className="image-upload">
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleFileChange}
+                  disabled={loading}
+                />
+                <div className="image-preview">
+                  {previewUrl || (formData.image && (formData.image.startsWith('http') || formData.image.startsWith('/')) ) ? (
+                    <img src={previewUrl || formData.image} alt="Pré-visualização" />
+                  ) : (
+                    <div className="image-preview__placeholder">Sem imagem selecionada</div>
+                  )}
+                </div>
+                {errors.image && <span className="error-message">{errors.image}</span>}
+              </div>
             </div>
 
             <div className="form-group">

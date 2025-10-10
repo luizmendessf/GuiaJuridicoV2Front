@@ -1,0 +1,37 @@
+/* src/components/sections/about/MissionSection.css */
+.mission-section { background-color: white; }
+html.dark .mission-section { background-color: var(--color-gray-900); }
+.mission-section .section__bg-gradient { background: linear-gradient(to right, rgba(239, 246, 255, 0.5), rgba(240, 249, 255, 0.5)); }
+html.dark .mission-section .section__bg-gradient { background: linear-gradient(to right, rgba(23, 37, 84, 0.1), rgba(8, 47, 73, 0.1)); }
+.mission__grid { display: grid; grid-template-columns: 1fr; gap: 3rem; }
+@media(min-width: 1024px) { .mission__grid { grid-template-columns: 1fr 1fr; align-items: center; } }
+
+.mission-section .section-title {
+  font-size: 2.5rem !important;
+  margin-bottom: 2.0rem !important;
+}
+
+@media (min-width: 768px) {
+  .mission-section .section-title {
+    font-size: 3rem !important;
+    margin-bottom: 2rem !important;
+  }
+}
+
+.mission__text { font-size: 1.125rem; color: var(--color-gray-600); margin-bottom: 1.5rem; }
+html.dark .mission__text { color: var(--color-gray-300); }
+
+.mission__stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-top: 2rem; }
+.stat-item { text-align: center; }
+body.animations-enabled .stat-item { animation: scaleIn 0.5s both; }
+.stat-item__icon-wrapper { width: 3rem; height: 3rem; margin: 0 auto 0.5rem; border-radius: 9999px; display: flex; align-items: center; justify-content: center; color: white; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1); transition: transform 0.3s ease; }
+.stat-item:hover .stat-item__icon-wrapper { transform: scale(1.1); }
+.stat-item__value { font-size: 1.5rem; font-weight: 700; -webkit-background-clip: text; background-clip: text; color: transparent; }
+.stat-item__label { font-size: 0.875rem; color: var(--color-gray-600); }
+html.dark .stat-item__label { color: var(--color-gray-300); }
+
+.mission__image-wrapper { position: relative; }
+.mission__image { width: 100%; height: auto; border-radius: 1rem; box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.25); transition: transform 0.5s ease; }
+.mission__image:hover { transform: scale(1.05); }
+.mission__image-overlay { position: absolute; inset: 0; background: linear-gradient(to top right, rgba(37, 99, 235, 0.12), rgba(2, 132, 199, 0.12)); border-radius: 1rem; }
+.mission__image-adornment { position: absolute; top: -1rem; right: -1rem; width: 6rem; height: 6rem; background-image: linear-gradient(to right, var(--color-primary-500), var(--color-secondary-500)); border-radius: 9999px; display: flex; align-items: center; justify-content: center; color: white; animation: bounce 3s infinite; }

@@ -4,6 +4,7 @@ import { ImageOff, Search, Plus } from "lucide-react";
 import OpportunityCard from "../components/cards/OpportunityCard";
 import OpportunityForm from "../components/forms/OpportunityForm";
 import Button from "../components/ui/button";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { getAllOportunidades, createOportunidade, updateOportunidade, deleteOportunidade } from "../services/apiService";
 import "./Oportunidades.css";
@@ -158,6 +159,7 @@ export default function Oportunidades() {
   const [formLoading, setFormLoading] = useState(false);
   
   const { hasAdminOrOrganizerRole } = useAuth();
+  const navigate = useNavigate();
   const canManageOpportunities = hasAdminOrOrganizerRole();
 
   const fetchOpportunities = async () => {
@@ -166,12 +168,19 @@ export default function Oportunidades() {
       const response = await getAllOportunidades();
       const data = response.data;
       
-      const processedOpportunities = data.map(opportunity => ({
-        ...opportunity,
-        image: imageMap[opportunity.image] || imageMap['estagio.jpg'], // fallback image
-        status: getOpportunityStatus(opportunity.openingDate, opportunity.closingDate),
-        requirements: opportunity.requirements ? JSON.parse(opportunity.requirements) : []
-      }));
+      const processedOpportunities = data.map(opportunity => {
+        let imageSrc = opportunity.image;
+        // Se vier uma URL (http/https ou caminho absoluto), manter; caso contrário mapear para assets locais
+        if (!imageSrc || !(imageSrc.startsWith('http') || imageSrc.startsWith('/'))) {
+          imageSrc = imageMap[imageSrc] || imageMap['estagio.jpg'];
+        }
+        return ({
+          ...opportunity,
+          image: imageSrc,
+          status: getOpportunityStatus(opportunity.openingDate, opportunity.closingDate),
+          requirements: opportunity.requirements ? JSON.parse(opportunity.requirements) : []
+        });
+      });
       
       setOpportunities(processedOpportunities);
       setError(null);
@@ -188,13 +197,11 @@ export default function Oportunidades() {
   }, []);
 
   const handleCreateOpportunity = () => {
-    setEditingOpportunity(null);
-    setShowForm(true);
+    navigate('/oportunidades/nova');
   };
 
   const handleEditOpportunity = (opportunity) => {
-    setEditingOpportunity(opportunity);
-    setShowForm(true);
+    navigate(`/oportunidades/${opportunity.id}/editar`);
   };
 
   const handleDeleteOpportunity = async (id) => {
@@ -347,12 +354,7 @@ export default function Oportunidades() {
           </div>
         )}
         
-        <OpportunityForm
-          opportunity={editingOpportunity}
-          onSave={handleSaveOpportunity}
-          onCancel={handleCancelForm}
-          isOpen={showForm}
-        />
+        {/* Form modal removido em favor das rotas de edição/criação dedicadas */}
       </div>
     </div>
   );
