@@ -174,11 +174,28 @@ export default function Oportunidades() {
         if (!imageSrc || !(imageSrc.startsWith('http') || imageSrc.startsWith('/'))) {
           imageSrc = imageMap[imageSrc] || imageMap['estagio.jpg'];
         }
+
+        // Normalizar requirements vindo do backend (string JSON ou array)
+        let normalizedRequirements = [];
+        const req = opportunity.requirements;
+        if (Array.isArray(req)) {
+          normalizedRequirements = req;
+        } else if (typeof req === 'string') {
+          try {
+            const parsed = JSON.parse(req);
+            normalizedRequirements = Array.isArray(parsed) ? parsed : [];
+          } catch (e) {
+            normalizedRequirements = [];
+          }
+        } else {
+          normalizedRequirements = [];
+        }
+
         return ({
           ...opportunity,
           image: imageSrc,
           status: getOpportunityStatus(opportunity.openingDate, opportunity.closingDate),
-          requirements: opportunity.requirements ? JSON.parse(opportunity.requirements) : []
+          requirements: normalizedRequirements
         });
       });
       
