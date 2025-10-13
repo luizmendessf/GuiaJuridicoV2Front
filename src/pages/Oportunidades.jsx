@@ -261,14 +261,26 @@ export default function Oportunidades() {
 
   // ALTERADO: A lógica de filtro agora lida com o caso "Todas" para o status
   const filteredOpportunities = opportunities.filter((opportunity) => {
-    const lowerSearchTerm = searchTerm.toLowerCase();
+    const lowerSearchTerm = (searchTerm || '').toLowerCase();
+
+    const title = typeof opportunity.title === 'string' ? opportunity.title.toLowerCase() : '';
+    const company = typeof opportunity.company === 'string' ? opportunity.company.toLowerCase() : '';
+    const location = typeof opportunity.location === 'string' ? opportunity.location.toLowerCase() : '';
+
     const matchesSearch =
-      opportunity.title.toLowerCase().includes(lowerSearchTerm) ||
-      opportunity.company.toLowerCase().includes(lowerSearchTerm) ||
-      opportunity.location.toLowerCase().includes(lowerSearchTerm);
-    const matchesCategory = selectedCategory === "Todos" || opportunity.type === selectedCategory;
+      title.includes(lowerSearchTerm) ||
+      company.includes(lowerSearchTerm) ||
+      location.includes(lowerSearchTerm);
+
+    const opportunityType = typeof opportunity.type === 'string' ? opportunity.type.toLowerCase() : '';
+    const selectedCategoryNorm = (selectedCategory || '').toLowerCase();
+    const matchesCategory = selectedCategory === 'Todos' || opportunityType === selectedCategoryNorm;
+
+    const opportunityStatus = typeof opportunity.status === 'string' ? opportunity.status.toLowerCase() : '';
+    const selectedStatusNorm = (selectedStatus || '').toLowerCase();
     // Se "Todas" estiver selecionado, o filtro de status é ignorado (sempre verdadeiro)
-    const matchesStatus = selectedStatus === "Todas" || opportunity.status === selectedStatus;
+    const matchesStatus = selectedStatus === 'Todas' || opportunityStatus === selectedStatusNorm;
+
     return matchesSearch && matchesCategory && matchesStatus;
   });
 
