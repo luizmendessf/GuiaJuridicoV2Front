@@ -6,8 +6,8 @@ import { BrowserRouter as Router } from "react-router-dom";
 import "./App.css"; 
 
 // Importe os componentes de layout principais
-import Navbar from "./components/layout/navbar"; // Verifique se o nome do arquivo é minúsculo
-import Footer from "./components/layout/footer"; // Verifique se o nome do arquivo é minúsculo
+import Navbar from "./components/layout/navbar"; 
+import Footer from "./components/layout/footer"; 
 
 // Importe o seu novo componente de rotas
 import AppRoutes from "./routes/AppRoutes";

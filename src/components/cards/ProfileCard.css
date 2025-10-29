@@ -1,15 +1,23 @@
 /* src/components/cards/ProfileCard.css */
 
-.profile-card {
+  .profile-card {
     text-align: center;
     border: 0;
     background-image: linear-gradient(to bottom right, white, rgba(239, 246, 255, 0.3));
-    box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.25);
+    /* Sombra mais suave para transição menos brusca entre sections */
+    box-shadow: 0 16px 32px -12px rgb(0 0 0 / 0.18);
     transition: all 0.3s ease;
+    /* Permite que o card estique para igualar alturas em grids/carrossel */
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    /* Evita que conteúdo seja cortado por estilos globais de .card */
+    overflow: visible;
   }
   
   .profile-card:hover {
-    box-shadow: 0 35px 70px -12px rgb(0 0 0 / 0.35);
+    /* Mantém destaque no hover, mas com intensidade reduzida */
+    box-shadow: 0 24px 48px -12px rgb(0 0 0 / 0.25);
     transform: translateY(-8px);
   }
   
@@ -73,6 +81,10 @@
   }
   .profile-card__role--primary { color: var(--color-primary-600); }
   .profile-card__role--secondary { color: var(--color-secondary-600); }
+
+  /* Conteúdo interno cresce para ocupar altura disponível e equalizar os cards */
+  .profile-card .card__header { flex-shrink: 0; }
+  .profile-card .card__content { flex-grow: 1; display: flex; align-items: flex-start; }
   
   /* Dark Mode */
   html.dark .profile-card {
