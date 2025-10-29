@@ -3,6 +3,17 @@
 .about-section {
     background-color: white;
   }
+  /* Gradiente inferior suave para transição com a próxima seção */
+  .about-section::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 80px;
+    pointer-events: none;
+    background: linear-gradient(to bottom, rgba(255, 255, 255, 0), rgba(255, 255, 255, 1));
+  }
   
   /* Estilo específico para o título da seção About */
   .about-section .section-title {
@@ -29,6 +40,8 @@
     gap: 3rem;
     max-width: 64rem;
     margin: 0 auto;
+    /* Garante que os itens estiquem para a altura da linha (maior card) */
+    align-items: stretch;
   }
   
   /* Animações de entrada específicas */
@@ -46,7 +59,13 @@
       grid-template-columns: repeat(2, 1fr);
     }
   }
+
+  /* Os cards dentro do grid ocupam 100% da altura disponível da linha */
+  .about__grid > .card { height: 100%; }
   
   html.dark .about-section {
     background-color: var(--color-gray-900);
+  }
+  html.dark .about-section::after {
+    background: linear-gradient(to bottom, rgba(17, 24, 39, 0), rgba(17, 24, 39, 1));
   }

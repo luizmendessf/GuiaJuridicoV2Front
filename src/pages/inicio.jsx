@@ -39,7 +39,11 @@ export default function Inicio() {
       <main>
         <HeroSection isReady={isReady} />
         <FeaturesSection />
-        <AboutSection />
+        <AboutSection 
+          variant="founders"
+          title="Conheça Nossos Fundadores"
+          subtitle="Os fundadores que tornaram o Guia Jurídico uma realidade"
+        />
         <CtaSection isReady={isReady} />
       </main>
     </div>
