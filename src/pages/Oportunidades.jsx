@@ -6,7 +6,7 @@ import OpportunityForm from "../components/forms/OpportunityForm";
 import Button from "../components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import { getAllOportunidades, createOportunidade, updateOportunidade, deleteOportunidade } from "../services/apiService";
+import api, { getAllOportunidades, createOportunidade, updateOportunidade, deleteOportunidade } from "../services/apiService";
 import "./Oportunidades.css";
 
 // Removido: import opportunitiesData from '../data/oportunidade.json';
@@ -170,9 +170,22 @@ export default function Oportunidades() {
       
       const processedOpportunities = data.map(opportunity => {
         let imageSrc = opportunity.image;
-        // Se vier uma URL (http/https ou caminho absoluto), manter; caso contrário mapear para assets locais
-        if (!imageSrc || !(imageSrc.startsWith('http') || imageSrc.startsWith('/'))) {
-          imageSrc = imageMap[imageSrc] || imageMap['estagio.jpg'];
+        // Regras de resolução de imagem:
+        // 1) Se estiver vazio, cai para a imagem padrão
+        // 2) Se vier como URL absoluta (http/https) ou caminho absoluto (/...), mantém
+        // 3) Se corresponder a um asset pré-mapeado, usa o asset
+        // 4) Caso contrário, assume que é um arquivo enviado (apenas nome) e monta a URL do backend
+        if (!imageSrc) {
+          imageSrc = imageMap['estagio.jpg'];
+        } else if (imageSrc.startsWith('http') || imageSrc.startsWith('/')) {
+          // mantém como veio do backend
+        } else if (imageMap[imageSrc]) {
+          imageSrc = imageMap[imageSrc];
+        } else {
+          // Ex.: "minha-imagem.jpg" -> "<API_BASE>/images/minha-imagem.jpg"
+          const base = api.defaults?.baseURL || '';
+          const slash = imageSrc.startsWith('/') ? '' : '/';
+          imageSrc = `${base}${slash}images/${imageSrc.replace(/^images\//, '')}`;
         }
 
         // Normalizar requirements vindo do backend (string JSON ou array)
