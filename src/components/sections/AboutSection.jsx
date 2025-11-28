@@ -7,6 +7,7 @@ import ProfileCard from "../cards/ProfileCard";
 // Imagens para a variante de fundadores
 import claraPradoImg from "../../assets/imagens/clara-prado.jpg";
 import luizMendesImg from "../../assets/imagens/luiz-mendes.jpg";
+import elisaPradoImg from "../../assets/imagens/elisa.png";
 
 /**
  * Componente AboutSection
@@ -44,6 +45,13 @@ export default function AboutSection({
               image={luizMendesImg}
               description="Desenvolvedor full-stack e bacharelando em Ciência da Computação. Criou o Guia Jurídico com o propósito de facilitar o acesso à informação por meio da tecnologia."
               variant="secondary"
+            />
+            <ProfileCard
+              name="Elisa Prado"
+              role="Co-fundadora"
+              image={elisaPradoImg}
+              description="Bacharelanda em Direito pela UFS e vice-presidente da SSD. A finalidade do Guia Jurídico é que cada vez mais pessoas tenham acesso às informações de cunho profissional no Direito nacional e internacional."
+              variant="primary"
             />
           </div>
         )}

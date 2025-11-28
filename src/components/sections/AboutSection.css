@@ -60,6 +60,12 @@
     }
   }
 
+  @media (min-width: 1024px) {
+    .about__grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
   /* Os cards dentro do grid ocupam 100% da altura disponível da linha */
   .about__grid > .card { height: 100%; }
   
