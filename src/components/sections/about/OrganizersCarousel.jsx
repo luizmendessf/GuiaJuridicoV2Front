@@ -11,6 +11,7 @@ import brunaImg from '../../../assets/imagens/Bruna.jpeg';
 import camilaImg from '../../../assets/imagens/camila.png';
 import arthurImg from '../../../assets/imagens/arthur.png';
 import millenaImg from '../../../assets/imagens/millena.png';
+import elisaPradoImg from '../../../assets/imagens/elisa.png';
 
 const organizers = [
   {
@@ -28,6 +29,14 @@ const organizers = [
     description:
       "Desenvolvedor full-stack e bacharelando em Ciência da Computação. Criou o Guia Jurídico com o propósito de facilitar o acesso à informação por meio da tecnologia.",
     variant: "secondary",
+  },
+  {
+    name: "Elisa Prado",
+    role: "Co-fundadora",
+    image: elisaPradoImg,
+    description:
+      "Bacharelanda em Direito pela UFS e vice-presidente da SSD. Busca ampliar o acesso às informações profissionais no Direito nacional e internacional.",
+    variant: "primary",
   },
   {
     name: "Bruna Bomfim Matos",
