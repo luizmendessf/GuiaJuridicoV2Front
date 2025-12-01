@@ -36,7 +36,7 @@ export default function AboutSection({
               name="Clara Prado"
               role="Co-fundadora"
               image={claraPradoImg}
-              description="Bacharelanda em Direito pela UFS e presidente da Sociedade Sergipana de Debates. Idealizou o Guia Jurídico para ampliar o acesso ao conhecimento na área jurídica."
+              description="Bacharelanda em Direito pela UFS, co-fundadora e presidente da Sociedade Sergipana de Debates. Idealizou o Guia Jurídico para ampliar o acesso ao conhecimento na área jurídica."
               variant="primary"
             />
             <ProfileCard
