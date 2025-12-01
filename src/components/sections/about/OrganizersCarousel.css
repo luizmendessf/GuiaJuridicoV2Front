@@ -184,15 +184,15 @@ html.dark .carousel-arrow {
   }
   .carousel-stage {
     overflow: hidden;
-    /* Garante altura suficiente para o card visível */
-    min-height: calc(var(--card-height, 28rem) + 1rem);
-    padding-bottom: 1rem;
+    /* Altura baseada no item central visível */
+    min-height: unset;
+    padding-bottom: 0.5rem;
   }
   .carousel-track { height: auto; }
   .carousel-item {
     width: 100%;
     padding: 0.25rem;
-    height: var(--card-height, auto);
+    height: auto;
     left: 0; /* base para animação via transform */
     transition: transform 0.38s ease-in-out, opacity 0.38s ease-in-out;
     will-change: transform, opacity;
@@ -204,17 +204,17 @@ html.dark .carousel-arrow {
   .position-right { transform: translateX(100%) scale(1); opacity: 0; z-index: 1; }
 
   /* Positions for single-card slide transitions */
-  .position-center { transform: translateX(0) scale(1); opacity: 1; z-index: 2; }
+  .position-center { position: relative; transform: translateX(0) scale(1); opacity: 1; z-index: 2; }
   .position-outside-right { transform: translateX(200%) scale(1); opacity: 0; z-index: 1; }
   .position-outside-left  { transform: translateX(-200%) scale(1); opacity: 0; z-index: 1; }
 
   /* Next: current slides left, RIGHT enters center */
-  .shift-next .position-center { transform: translateX(-100%) scale(1); opacity: 0.75; }
-  .shift-next .position-right { transform: translateX(0) scale(1); opacity: 1; }
+  .shift-next .position-center { position: absolute; transform: translateX(-100%) scale(1); opacity: 0.75; }
+  .shift-next .position-right { position: relative; transform: translateX(0) scale(1); opacity: 1; }
   .shift-next .position-outside-right { transform: translateX(100%) scale(1); opacity: 0.75; }
 
   /* Prev: current slides right, LEFT enters center */
-  .shift-prev .position-center { transform: translateX(100%) scale(1); opacity: 0.75; }
-  .shift-prev .position-left { transform: translateX(0) scale(1); opacity: 1; }
+  .shift-prev .position-center { position: absolute; transform: translateX(100%) scale(1); opacity: 0.75; }
+  .shift-prev .position-left { position: relative; transform: translateX(0) scale(1); opacity: 1; }
   .shift-prev .position-outside-left { transform: translateX(-100%) scale(1); opacity: 0.75; }
 }
