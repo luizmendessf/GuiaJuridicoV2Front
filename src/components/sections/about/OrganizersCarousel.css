@@ -157,6 +157,7 @@
   cursor: pointer;
   box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.2);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
+  z-index: 50; /* acima dos cards */
 }
 .carousel-arrow:hover { transform: translateY(-50%) scale(1.05); box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.25); }
 .carousel-arrow.left { left: -0.75rem; }
@@ -173,4 +174,47 @@
 /* Dark mode adjustments */
 html.dark .carousel-arrow { 
   background: linear-gradient(to right, var(--color-primary-600), var(--color-secondary-600));
+}
+
+/* Mobile: show only one card at a time and keep content inside */
+@media (max-width: 640px) {
+  .organizers-carousel {
+    max-width: 100%;
+    gap: 0.5rem;
+  }
+  .carousel-stage {
+    overflow: hidden;
+    /* Garante altura suficiente para o card visível */
+    min-height: calc(var(--card-height, 28rem) + 1rem);
+    padding-bottom: 1rem;
+  }
+  .carousel-track { height: auto; }
+  .carousel-item {
+    width: 100%;
+    padding: 0.25rem;
+    height: var(--card-height, auto);
+    left: 0; /* base para animação via transform */
+    transition: transform 0.38s ease-in-out, opacity 0.38s ease-in-out;
+    will-change: transform, opacity;
+  }
+
+  /* Hide side previews on mobile */
+  /* Mantém slots laterais fora da tela para transição correta */
+  .position-left { transform: translateX(-100%) scale(1); opacity: 0; z-index: 1; }
+  .position-right { transform: translateX(100%) scale(1); opacity: 0; z-index: 1; }
+
+  /* Positions for single-card slide transitions */
+  .position-center { transform: translateX(0) scale(1); opacity: 1; z-index: 2; }
+  .position-outside-right { transform: translateX(200%) scale(1); opacity: 0; z-index: 1; }
+  .position-outside-left  { transform: translateX(-200%) scale(1); opacity: 0; z-index: 1; }
+
+  /* Next: current slides left, RIGHT enters center */
+  .shift-next .position-center { transform: translateX(-100%) scale(1); opacity: 0.75; }
+  .shift-next .position-right { transform: translateX(0) scale(1); opacity: 1; }
+  .shift-next .position-outside-right { transform: translateX(100%) scale(1); opacity: 0.75; }
+
+  /* Prev: current slides right, LEFT enters center */
+  .shift-prev .position-center { transform: translateX(100%) scale(1); opacity: 0.75; }
+  .shift-prev .position-left { transform: translateX(0) scale(1); opacity: 1; }
+  .shift-prev .position-outside-left { transform: translateX(-100%) scale(1); opacity: 0.75; }
 }

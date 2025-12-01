@@ -19,7 +19,15 @@ const organizers = [
     role: "Co-fundadora",
     image: claraPradoImg,
     description:
-      "Bacharelanda em Direito pela UFS e presidente da Sociedade Sergipana de Debates. Idealizou o Guia Jurídico para ampliar o acesso ao conhecimento na área jurídica.",
+      "Bacharelanda em Direito pela UFS, co-fundadora e presidente da Sociedade Sergipana de Debates. Idealizou o Guia Jurídico para ampliar o acesso ao conhecimento na área jurídica.",
+    variant: "primary",
+  },
+    {
+    name: "Elisa Prado",
+    role: "Co-fundadora",
+    image: elisaPradoImg,
+    description:
+      "Bacharelanda em Direito pela UFS e fundadora da Sociedade Sergipana de Debates. Idealizou o Guia Jurídico para ampliar o acesso ao conhecimento e oportunidades na área jurídica.",
     variant: "primary",
   },
   {
@@ -30,14 +38,7 @@ const organizers = [
       "Desenvolvedor full-stack e bacharelando em Ciência da Computação. Criou o Guia Jurídico com o propósito de facilitar o acesso à informação por meio da tecnologia.",
     variant: "secondary",
   },
-  {
-    name: "Elisa Prado",
-    role: "Co-fundadora",
-    image: elisaPradoImg,
-    description:
-      "Bacharelanda em Direito pela UFS e vice-presidente da SSD. Busca ampliar o acesso às informações profissionais no Direito nacional e internacional.",
-    variant: "primary",
-  },
+
   {
     name: "Bruna Bomfim Matos",
     role: "Organizadora",

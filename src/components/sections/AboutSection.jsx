@@ -50,7 +50,7 @@ export default function AboutSection({
               name="Elisa Prado"
               role="Co-fundadora"
               image={elisaPradoImg}
-              description="Bacharelanda em Direito pela UFS e vice-presidente da SSD. A finalidade do Guia Jurídico é que cada vez mais pessoas tenham acesso às informações de cunho profissional no Direito nacional e internacional."
+              description="Bacharelanda em Direito pela UFS e co-fundadora da Sociedade Sergipana de Debates. Idealizou o Guia Jurídico para ampliar o acesso ao conhecimento e oportunidades na área jurídica."
               variant="primary"
             />
           </div>
