@@ -23,6 +23,16 @@ export const AuthProvider = ({ children }) => {
   };
 
   useEffect(() => {
+    const currentApiBaseURL = api?.defaults?.baseURL || '';
+    const previousApiBaseURL = localStorage.getItem('apiBaseURL') || '';
+    if (previousApiBaseURL && currentApiBaseURL && previousApiBaseURL !== currentApiBaseURL) {
+      localStorage.removeItem('authToken');
+      setUser(null);
+    }
+    if (currentApiBaseURL) {
+      localStorage.setItem('apiBaseURL', currentApiBaseURL);
+    }
+
     const token = localStorage.getItem('authToken');
     if (token && !isTokenExpired(token)) {
       try {

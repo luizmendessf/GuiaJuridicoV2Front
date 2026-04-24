@@ -93,3 +93,6 @@ dist
 # Temporary folders
 tmp/
 temp/
+
+# Vite temp files
+vite.config.js.timestamp-*

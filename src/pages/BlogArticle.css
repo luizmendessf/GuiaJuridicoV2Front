@@ -1,0 +1,116 @@
+.blog-article-page {
+  background-color: var(--color-gray-50);
+  padding: 2rem 0;
+  min-height: 100vh;
+}
+
+html.dark .blog-article-page {
+  background-color: var(--color-gray-900);
+}
+
+.blog-article-back {
+  margin-top: 5rem;
+  margin-bottom: 1.5rem;
+}
+
+.blog-article-back-link {
+  color: var(--color-gray-600);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.blog-article-back-link:hover {
+  color: var(--color-primary-600);
+}
+
+html.dark .blog-article-back-link {
+  color: var(--color-gray-300);
+}
+
+.blog-article {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.blog-article__image-wrapper {
+  position: relative;
+  height: 22rem;
+  border-radius: 0.75rem;
+  overflow: hidden;
+  border: 1px solid var(--color-gray-200);
+}
+
+.blog-article__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.blog-article__image-overlay {
+  position: absolute;
+  inset: 0;
+  background-image: linear-gradient(to top, rgba(0, 0, 0, 0.4), transparent);
+}
+
+html.dark .blog-article__image-wrapper {
+  border-color: var(--color-gray-800);
+}
+
+.blog-article__header {
+  margin-top: 1.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.blog-article__title {
+  font-size: 2.5rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, var(--color-primary-600), var(--color-primary-800));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  line-height: 1.15;
+  margin-bottom: 0.75rem;
+  text-align: center;
+}
+
+.blog-article__subtitle {
+  color: var(--color-gray-600);
+  font-size: 1.125rem;
+  line-height: 1.7;
+  text-align: center;
+}
+
+html.dark .blog-article__subtitle {
+  color: var(--color-gray-300);
+}
+
+.blog-article__content {
+  color: var(--color-gray-700);
+  line-height: 1.9;
+  font-size: 1.05rem;
+  white-space: pre-wrap;
+}
+
+html.dark .blog-article__content {
+  color: var(--color-gray-200);
+}
+
+.blog-article-state {
+  margin-top: 5rem;
+  text-align: center;
+  color: var(--color-gray-600);
+  padding: 2rem 0;
+}
+
+html.dark .blog-article-state {
+  color: var(--color-gray-300);
+}
+
+@media (max-width: 768px) {
+  .blog-article__title {
+    font-size: 2rem;
+  }
+  .blog-article__image-wrapper {
+    height: 16rem;
+  }
+}

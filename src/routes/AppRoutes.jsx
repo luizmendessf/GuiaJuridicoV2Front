@@ -6,6 +6,8 @@ import Inicio from "../pages/inicio";
 import Oportunidades from "../pages/Oportunidades";
 import OpportunityEditorPage from "../pages/OpportunityEditorPage";
 import Sobre from "../pages/Sobre";
+import Blog from "../pages/Blog";
+import BlogArticle from "../pages/BlogArticle";
 import LoginPage from "../pages/LoginPage";
 import RegisterPage from "../pages/RegisterPage";
 import UserProfile from "../pages/UserProfile";
@@ -51,6 +53,8 @@ export default function AppRoutes() {
       
       {/* Outras rotas */}
       <Route path="/oportunidades" element={<Oportunidades />} />
+      <Route path="/blog" element={<Blog />} />
+      <Route path="/blog/:idOrSlug" element={<BlogArticle />} />
       <Route path="/oportunidades/nova" element={
         <OrganizerOrAdminRoute>
           <OpportunityEditorPage mode="create" />
