@@ -57,6 +57,7 @@ export default function Navbar() {
   const navigation = [
     { name: "Início", href: "/" },
     { name: "Oportunidades", href: "/oportunidades" },
+    { name: "Blog", href: "/blog" },
     { name: "Sobre", href: "/sobre" },
     ...(user && hasAdminRole() ? [{ name: "Administração", href: "/admin", icon: Settings }] : []),
   ];

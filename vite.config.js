@@ -6,7 +6,15 @@ export default defineConfig({
   plugins: [react()],
   server: {
     port: 3000,
-    open: true
+    open: false,
+    watch: {
+      ignored: [
+        '**/vite.config.js.timestamp-*',
+        '**/*.timestamp-*',
+        '**/.git/**',
+        '**/node_modules/**'
+      ]
+    }
   },
   build: {
     outDir: 'dist',

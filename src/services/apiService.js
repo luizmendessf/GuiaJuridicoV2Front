@@ -2,8 +2,12 @@
 import axios from 'axios';
 import { jwtDecode } from 'jwt-decode';
 
+const defaultBaseURL = import.meta.env?.DEV
+  ? 'http://localhost:8080/api'
+  : 'https://guiajuridicov2back.onrender.com/api';
+
 const api = axios.create({
-  baseURL: import.meta.env?.VITE_API_URL || 'https://guiajuridicov2back.onrender.com/api'
+  baseURL: import.meta.env?.VITE_API_URL || defaultBaseURL
 });
 
 // Função para verificar se o token expirou
@@ -20,8 +24,14 @@ const isTokenExpired = (token) => {
 // Interceptador para adicionar o token JWT em todas as requisições autenticadas
 api.interceptors.request.use(async config => {
   // Endpoints públicos que não precisam de autenticação
-  const publicEndpoints = ['/oportunidades/todas', '/auth/login', '/auth/register'];
-  const isPublicEndpoint = publicEndpoints.some(endpoint => config.url === endpoint || config.url.endsWith(endpoint));
+  const url = config.url || '';
+  const method = (config.method || 'get').toLowerCase();
+  const isAuthPublic = url.startsWith('/auth/login') || url.startsWith('/auth/register');
+  const isPublicBlogGet =
+    method === 'get' &&
+    (url === '/blog' || (url.startsWith('/blog/') && !url.startsWith('/blog/admin')));
+  const isPublicGet = method === 'get' && (url.startsWith('/oportunidades/todas') || isPublicBlogGet);
+  const isPublicEndpoint = isAuthPublic || isPublicGet;
   
   if (!isPublicEndpoint) {
     const token = localStorage.getItem('authToken');
@@ -67,6 +77,15 @@ export const changePassword = (passwordData) => api.post('/usuarios/me/mudar-sen
 export const getAllUsers = () => api.get('/admin/usuarios');
 export const deleteUser = (userId) => api.delete(`/admin/usuarios/${userId}`);
 export const updateUserRoles = (userId, roles) => api.put(`/admin/usuarios/${userId}/roles`, { nomesDasRoles: roles });
+
+// --- Funções de Blog ---
+export const getBlogArticles = () => api.get('/blog');
+export const getBlogArticleByIdOrSlug = (idOrSlug) => api.get(`/blog/${idOrSlug}`);
+export const createBlogArticle = (data) => api.post('/blog', data);
+export const getBlogArticlesAdmin = () => api.get('/blog/admin');
+export const getBlogArticleAdminById = (id) => api.get(`/blog/admin/${id}`);
+export const updateBlogArticle = (id, data) => api.put(`/blog/${id}`, data);
+export const deleteBlogArticle = (id) => api.delete(`/blog/${id}`);
 
 // ... Outras funções (favoritar) virão aqui ...
 
