@@ -19,17 +19,35 @@ import { AuthProvider } from "./context/AuthContext";
 import { FavoritesProvider } from "./context/FavoritesContext";
 
 const GA_MEASUREMENT_ID = "G-6LCNVZVFV5";
-const COOKIE_CONSENT_KEY = "cookieConsent.analytics";
+const COOKIE_CONSENT_KEY = "cookieConsent.xanalytics";
+
+const getPagePath = () => {
+  if (typeof window === "undefined") return "/";
+  return `${window.location.pathname}${window.location.search || ""}`;
+};
+
+const sendPageView = (pagePath) => {
+  if (typeof window === "undefined") return;
+  if (typeof window.gtag !== "function") return;
+
+  window.gtag("event", "page_view", {
+    page_path: pagePath,
+    page_location: window.location.href,
+    page_title: document.title,
+  });
+  window.__gaLastPagePath = pagePath;
+};
 
 const ensureGoogleAnalyticsLoaded = () => {
   if (typeof window === "undefined") return;
-  if (window.__gaLoaded) return;
 
   window.dataLayer = window.dataLayer || [];
   function gtag() {
     window.dataLayer.push(arguments);
   }
   window.gtag = window.gtag || gtag;
+
+  if (window.__gaLoaded) return;
 
   const existing = document.querySelector(`script[data-ga="gtag"][src*="id=${GA_MEASUREMENT_ID}"]`);
   if (!existing) {
@@ -41,8 +59,9 @@ const ensureGoogleAnalyticsLoaded = () => {
   }
 
   window.gtag("js", new Date());
-  window.gtag("config", GA_MEASUREMENT_ID);
+  window.gtag("config", GA_MEASUREMENT_ID, { send_page_view: false });
   window.__gaLoaded = true;
+  sendPageView(getPagePath());
 };
 
 function AnalyticsTracker({ consent }) {
@@ -51,14 +70,11 @@ function AnalyticsTracker({ consent }) {
   useEffect(() => {
     if (consent !== "accepted") return;
     if (typeof window === "undefined") return;
-    if (typeof window.gtag !== "function") return;
 
     const pagePath = `${location.pathname}${location.search || ""}`;
-    window.gtag("event", "page_view", {
-      page_path: pagePath,
-      page_location: window.location.href,
-      page_title: document.title,
-    });
+    ensureGoogleAnalyticsLoaded();
+    if (window.__gaLastPagePath === pagePath) return;
+    sendPageView(pagePath);
   }, [consent, location.pathname, location.search]);
 
   return null;
