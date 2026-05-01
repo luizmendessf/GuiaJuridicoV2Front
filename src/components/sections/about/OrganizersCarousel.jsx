@@ -12,6 +12,8 @@ import camilaImg from '../../../assets/imagens/camila.png';
 import arthurImg from '../../../assets/imagens/arthur.png';
 import millenaImg from '../../../assets/imagens/millena.png';
 import elisaPradoImg from '../../../assets/imagens/elisa.png';
+import tirzahImg from '../../../assets/imagens/tirzah.jpg';
+import mariaFernandaImg from '../../../assets/imagens/mariaFernanda.jpg';
 
 const organizers = [
   {
@@ -19,17 +21,17 @@ const organizers = [
     role: "Co-fundadora",
     image: claraPradoImg,
     description:
-      "Bacharelanda em Direito pela UFS, co-fundadora e presidente da Sociedade Sergipana de Debates. Idealizou o Guia Jurídico para ampliar o acesso ao conhecimento na área jurídica.",
+      "Advogada formada pela UFS, co-fundadora e presidente da Sociedade Sergipana de Debates. Idealizou o Guia Jurídico para ampliar o acesso ao conhecimento na área jurídica.",
     variant: "primary",
   },
-    {
+   /* {
     name: "Elisa Prado",
     role: "Co-fundadora",
     image: elisaPradoImg,
     description:
       "Bacharelanda em Direito pela UFS e fundadora da Sociedade Sergipana de Debates. Idealizou o Guia Jurídico para ampliar o acesso ao conhecimento e oportunidades na área jurídica.",
     variant: "primary",
-  },
+  },*/
   {
     name: "Luiz Mendes",
     role: "Co-fundador",
@@ -56,11 +58,11 @@ const organizers = [
     variant: "secondary",
   },
   {
-    name: "Arthur",
+    name: "Tirzah",
     role: "Organizador",
-    image: arthurImg,
+    image: tirzahImg,
     description:
-      "Bacharelando em Direito pela UFS. Por meio do Guia Jurídico, busca promover o acesso ao conhecimento jurídico, utilizando uma comunicação acessível e clara para todos.",
+      "Bacharelanda em direito pela UFS e integrante da sociedade sergipana de debates, assim como da themis Ej. entrou para o time do guia jurídico buscando colaborar na disseminação de informações envolvendo a área jurídica por meio de uma linguagem clara e eficiente.",
     variant: "primary",
   },
   {
@@ -69,6 +71,14 @@ const organizers = [
     image: millenaImg,
     description:
       "Bacharelanda em Direito pela PUC-SP e integrante da Sociedade Sergipana de Debates. Atua na direção do Guia Jurídico com o propósito de expandir o alcance do conhecimento jurídico por meio de iniciativas inovadoras e acessíveis.",
+    variant: "secondary",
+  },
+  {
+    name: "Maria Fernanda",
+    role: "Organizadora",
+    image: mariaFernandaImg,
+    description:
+      "Graduanda em Direito pela Universidade Federal da Grande Dourados (UFGD). Atua na interseção entre educação, debates e impacto social, sendo fundadora da Sociedade de Debates do Mato Grosso do Sul. Tem como foco a ampliação do acesso a oportunidades e o fortalecimento da formação crítica no meio jurídico.",
     variant: "secondary",
   },
 ];
