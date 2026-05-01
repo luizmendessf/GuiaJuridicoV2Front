@@ -36,7 +36,7 @@ export default function AboutSection({
               name="Clara Prado"
               role="Co-fundadora"
               image={claraPradoImg}
-              description="Bacharelanda em Direito pela UFS, co-fundadora e presidente da Sociedade Sergipana de Debates. Idealizou o Guia Jurídico para ampliar o acesso ao conhecimento na área jurídica."
+              description="Advogada formada pela UFS, co-fundadora e presidente da Sociedade Sergipana de Debates. Idealizou o Guia Jurídico para ampliar o acesso ao conhecimento na área jurídica."
               variant="primary"
             />
             <ProfileCard
@@ -46,13 +46,13 @@ export default function AboutSection({
               description="Desenvolvedor full-stack e bacharelando em Ciência da Computação. Criou o Guia Jurídico com o propósito de facilitar o acesso à informação por meio da tecnologia."
               variant="secondary"
             />
-            <ProfileCard
+            {/* <ProfileCard
               name="Elisa Prado"
               role="Co-fundadora"
               image={elisaPradoImg}
               description="Bacharelanda em Direito pela UFS e co-fundadora da Sociedade Sergipana de Debates. Idealizou o Guia Jurídico para ampliar o acesso ao conhecimento e oportunidades na área jurídica."
               variant="primary"
-            />
+            /> */}
           </div>
         )}
       </div>

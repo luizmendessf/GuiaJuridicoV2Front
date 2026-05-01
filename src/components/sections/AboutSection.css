@@ -60,10 +60,14 @@
     }
   }
 
-  @media (min-width: 1024px) {
-    .about__grid {
-      grid-template-columns: repeat(3, 1fr);
-    }
+  .about__grid {
+    display: grid;
+    gap: 3rem;
+    max-width: 64rem;
+    margin: 0 auto;
+    align-items: stretch;
+  
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
   }
 
   /* Os cards dentro do grid ocupam 100% da altura disponível da linha */
