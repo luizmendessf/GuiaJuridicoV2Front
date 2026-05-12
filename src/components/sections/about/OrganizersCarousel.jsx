@@ -24,14 +24,14 @@ const organizers = [
       "Advogada formada pela UFS, co-fundadora e presidente da Sociedade Sergipana de Debates. Idealizou o Guia Jurídico para ampliar o acesso ao conhecimento na área jurídica.",
     variant: "primary",
   },
-   /* {
+  {
     name: "Elisa Prado",
     role: "Co-fundadora",
     image: elisaPradoImg,
     description:
       "Bacharelanda em Direito pela UFS e fundadora da Sociedade Sergipana de Debates. Idealizou o Guia Jurídico para ampliar o acesso ao conhecimento e oportunidades na área jurídica.",
     variant: "primary",
-  },*/
+  },
   {
     name: "Luiz Mendes",
     role: "Co-fundador",
