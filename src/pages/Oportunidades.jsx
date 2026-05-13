@@ -151,7 +151,7 @@ export default function Oportunidades() {
   const [opportunities, setOpportunities] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("Todos");
-  const [selectedStatus, setSelectedStatus] = useState("Todas");
+  const [selectedStatus, setSelectedStatus] = useState("Abertas");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [showForm, setShowForm] = useState(false);
