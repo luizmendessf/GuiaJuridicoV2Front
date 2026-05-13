@@ -7,126 +7,9 @@ import Button from "../components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import api, { getAllOportunidades, createOportunidade, updateOportunidade, deleteOportunidade } from "../services/apiService";
+import { opportunityImageMap } from "../utils/opportunityImageMap";
+import { resolveOpportunityImageSrc } from "../utils/resolveOpportunityImageSrc";
 import "./Oportunidades.css";
-
-// Removido: import opportunitiesData from '../data/oportunidade.json';
-//  ------IMAGENS------  //
-
-//padrões//
-import competicao from '../assets/imagens/competicao.jpeg';
-import artigo from '../assets/imagens/artigo.jpg';
-import estagio from '../assets/imagens/estagio.jpg';
-import advogado from '../assets/imagens/advogado.jpg';
-import congresso from '../assets/imagens/congresso.jpg';
-
-//Específicas//
-
-//CONGRESSOS
-import direitosHumanos from '../assets/imagens/congresso-direitoshumanos.png'
-import cienciasCriminais from '../assets/imagens/seminario-cienciaqs-contabeis.png'
-import ibdfam from '../assets/imagens/ibdfam.jpg';
-import fenalaw from '../assets/imagens/fenalaw.png';
-import intCivil from '../assets/imagens/congressoIntDireitoCivil.jpg';
-import consinter from '../assets/imagens/consinter.jpg';
-
-//EVENTOS
-import emerj from '../assets/imagens/emerj.png';
-
-//ESTÁGIO
-import inbetta from '../assets/imagens/inbetta.jpg';
-import lennonfelix from '../assets/imagens/lennonfelix.png';
-import wwf from '../assets/imagens/wwf.jpg';
-import lbca from '../assets/imagens/lbca.png';
-import emais from '../assets/imagens/emais.png';
-
-//ADVOGADOS
-import canonical from '../assets/imagens/canonical.jpg';
-import urbano from '../assets/imagens/urbano.png';
-import vianna from '../assets/imagens/vianna.png';
-import qca from '../assets/imagens/qca.png';
-import zurano from '../assets/imagens/zurano.jpg';
-import radar from '../assets/imagens/radar.png';
-import machadomeyer from '../assets/imagens/machadomeyer.jpg';
-import mendes from '../assets/imagens/mendes.jpg';
-import contabilizei from '../assets/imagens/contabilizei.jpg';
-import persona from '../assets/imagens/persona.jpg';
-
-//COMPETIÇÃO
-import ibd from '../assets/imagens/ibd.png';
-import experience from '../assets/imagens/experience.jpg';
-import stf from '../assets/imagens/stf.jpg';
-import vis from '../assets/imagens/vis.jpg';
-import jessup from '../assets/imagens/jessup.jpg';
-
-//PUBLICAÇÃO
-import direitoepraxis from '../assets/imagens/direitoepraxis.png';
-import cientifica from '../assets/imagens/cientifica.jpg';
-import rdb from '../assets/imagens/rdb.jpg';
-import ufv from '../assets/imagens/ufv.jpg';
-import rbdu from '../assets/imagens/rbdu.png';
-import rej from '../assets/imagens/rej.png';
-import idp from '../assets/imagens/idp.jpg';
-
-
-const imageMap = {
-    //padrões//
-  "estagio.jpg": estagio, 
-  "advogado.jpg": advogado,   
-  "competicao.jpg": competicao,  
-  "publicacao.jpg": artigo,
-  "congresso.jpg": congresso,  
-    
-    //Específicas//
-   
-//CONGRESSOS
-  "direitos-humanos.png": direitosHumanos,
-  "cienciasCriminais.png": cienciasCriminais,
-  "ibdfam.jpg": ibdfam,
-  "fenalaw.png": fenalaw,
-  "consinter.jpg": consinter,
-  "intCivil.jpg": intCivil,
-
-  //EVENTOS
-  "emerj.png": emerj,
-
-//ESTÁGIO´
-"inbetta.jpg": inbetta,
-"lennonfelix.jpg": lennonfelix,
-"wwf.jpg": wwf,
-"lbca.png": lbca,
-"emais.png": emais,
-
-//ADVOGADOS
-"canonical.jpg": canonical,
-"urbano.png": urbano,
-"vianna.png": vianna,
-"qca.png": qca,
-"machadomeyer.jpg": machadomeyer,
-"zurano.jpg": zurano,
-"radar.png": radar,
-"mendes.jpg": mendes,
-"contabilizei.jpg": contabilizei,
-
-//COMPETIÇÃO
-"persona.jpg": persona,
-"ibd.jpg": ibd,
-"experience.jpg": experience,
-"stf.jpg": stf,
-"vis.jpg": vis,
-"jessup.jpg": jessup,
-
-//PUBLICAÇÃO
-"direitoepraxis.png": direitoepraxis,
-"cientifica.jpg": cientifica,
-"rdb.jpg": rdb,
-"ufv.jpg": ufv,
-"rbdu.png": rbdu,
-"rej.png": rej,
-"idp.jpg": idp,
-  
-};
-
-//  IMAGENS
 
 const getOpportunityStatus = (openingDate, closingDate) => {
   const now = new Date();
@@ -168,25 +51,13 @@ export default function Oportunidades() {
       const response = await getAllOportunidades();
       const data = response.data;
       
+      const apiBase = api.defaults?.baseURL || '';
       const processedOpportunities = data.map(opportunity => {
-        let imageSrc = opportunity.image;
-        // Regras de resolução de imagem:
-        // 1) Se estiver vazio, cai para a imagem padrão
-        // 2) Se vier como URL absoluta (http/https) ou caminho absoluto (/...), mantém
-        // 3) Se corresponder a um asset pré-mapeado, usa o asset
-        // 4) Caso contrário, assume que é um arquivo enviado (apenas nome) e monta a URL do backend
-        if (!imageSrc) {
-          imageSrc = imageMap['estagio.jpg'];
-        } else if (imageSrc.startsWith('http') || imageSrc.startsWith('/')) {
-          // mantém como veio do backend
-        } else if (imageMap[imageSrc]) {
-          imageSrc = imageMap[imageSrc];
-        } else {
-          // Ex.: "minha-imagem.jpg" -> "<API_BASE>/images/minha-imagem.jpg"
-          const base = api.defaults?.baseURL || '';
-          const slash = imageSrc.startsWith('/') ? '' : '/';
-          imageSrc = `${base}${slash}images/${imageSrc.replace(/^images\//, '')}`;
-        }
+        const imageSrc = resolveOpportunityImageSrc(
+          opportunity.image,
+          opportunityImageMap,
+          apiBase
+        );
 
         // Normalizar requirements vindo do backend (string JSON ou array)
         let normalizedRequirements = [];

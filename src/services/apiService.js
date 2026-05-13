@@ -30,7 +30,12 @@ api.interceptors.request.use(async config => {
   const isPublicBlogGet =
     method === 'get' &&
     (url === '/blog' || (url.startsWith('/blog/') && !url.startsWith('/blog/admin')));
-  const isPublicGet = method === 'get' && (url.startsWith('/oportunidades/todas') || isPublicBlogGet);
+  const isPublicBibliotecaGet =
+    method === 'get' &&
+    (url === '/biblioteca' || (url.startsWith('/biblioteca/') && !url.startsWith('/biblioteca/admin')));
+  const isPublicGet =
+    method === 'get' &&
+    (url.startsWith('/oportunidades/todas') || isPublicBlogGet || isPublicBibliotecaGet);
   const isPublicEndpoint = isAuthPublic || isPublicGet;
   
   if (!isPublicEndpoint) {
@@ -86,6 +91,15 @@ export const getBlogArticlesAdmin = () => api.get('/blog/admin');
 export const getBlogArticleAdminById = (id) => api.get(`/blog/admin/${id}`);
 export const updateBlogArticle = (id, data) => api.put(`/blog/${id}`, data);
 export const deleteBlogArticle = (id) => api.delete(`/blog/${id}`);
+
+// --- Biblioteca (PDFs / Google Drive) ---
+export const getLibraryDocuments = () => api.get('/biblioteca');
+export const getLibraryDocumentByIdOrSlug = (idOrSlug) => api.get(`/biblioteca/${idOrSlug}`);
+export const createLibraryDocument = (data) => api.post('/biblioteca', data);
+export const getLibraryDocumentsAdmin = () => api.get('/biblioteca/admin');
+export const getLibraryDocumentAdminById = (id) => api.get(`/biblioteca/admin/${id}`);
+export const updateLibraryDocument = (id, data) => api.put(`/biblioteca/${id}`, data);
+export const deleteLibraryDocument = (id) => api.delete(`/biblioteca/${id}`);
 
 // ... Outras funções (favoritar) virão aqui ...
 

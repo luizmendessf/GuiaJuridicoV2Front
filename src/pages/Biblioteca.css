@@ -1,0 +1,16 @@
+.biblioteca-list .library-doc-card__image-wrapper {
+  margin-top: 0.75rem;
+}
+
+.biblioteca-cover-preview {
+  max-width: 12rem;
+  aspect-ratio: 3 / 4;
+  margin: 0 auto;
+}
+
+.biblioteca-cover-preview img,
+.biblioteca-cover-preview .blog-image-preview__placeholder {
+  object-fit: cover;
+  width: 100%;
+  height: 100%;
+}
