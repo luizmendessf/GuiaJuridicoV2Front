@@ -4,6 +4,8 @@ import { X, Save, Calendar, Building, MapPin, DollarSign, ExternalLink, FileText
 import Button from '../ui/button';
 import './OpportunityForm.css';
 import { uploadImage } from '../../services/apiService';
+import { opportunityPresetKeySet } from '../../utils/opportunityImageMap';
+import { logicalImageKeyForForm, imageFilenameFromUploadResponse } from '../../utils/resolveOpportunityImageSrc';
 
 const OpportunityForm = ({ opportunity = null, onSave, onCancel, isOpen }) => {
   const [formData, setFormData] = useState({
@@ -67,7 +69,7 @@ const OpportunityForm = ({ opportunity = null, onSave, onCancel, isOpen }) => {
         salary: opportunity.salary || '',
         applicationLink: opportunity.applicationLink || '',
         type: opportunity.type || 'Estágio',
-        image: opportunity.image || 'estagio.jpg',
+        image: logicalImageKeyForForm(opportunity.image, opportunityPresetKeySet),
         openingDate: opportunity.openingDate || '',
         closingDate: opportunity.closingDate || ''
       });
@@ -139,9 +141,14 @@ const OpportunityForm = ({ opportunity = null, onSave, onCancel, isOpen }) => {
       if (imageFile) {
         try {
           const response = await uploadImage(imageFile);
-          const uploadedUrl = response.data?.url || response.data;
-          if (uploadedUrl) {
-            submitData.image = uploadedUrl;
+          const d = response.data;
+          const nameFromApi = d?.filename;
+          const fromUrl =
+            imageFilenameFromUploadResponse(d?.url || '') ||
+            (typeof d === 'string' ? imageFilenameFromUploadResponse(d) : null);
+          const storedName = nameFromApi || fromUrl;
+          if (storedName) {
+            submitData.image = storedName;
           }
         } catch (err) {
           console.error('Falha no upload da imagem:', err);
