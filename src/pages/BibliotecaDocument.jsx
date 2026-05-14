@@ -12,12 +12,16 @@ const resolveImageUrl = (imagePath) => {
   return `${base}/images/${imagePath}`;
 };
 
+/** Alinhado com `Biblioteca.jsx`: enquanto `true`, não carrega documento. */
+const BIBLIOTECA_EM_BREVE = true;
+
 export default function BibliotecaDocument() {
   const { idOrSlug } = useParams();
   const [doc, setDoc] = useState(null);
   const [status, setStatus] = useState("loading");
 
   useEffect(() => {
+    if (BIBLIOTECA_EM_BREVE) return;
     let active = true;
     window.scrollTo({ top: 0, behavior: "smooth" });
     const load = async () => {
@@ -36,6 +40,21 @@ export default function BibliotecaDocument() {
       active = false;
     };
   }, [idOrSlug]);
+
+  if (BIBLIOTECA_EM_BREVE) {
+    return (
+      <div className="blog-article-page biblioteca-doc-page">
+        <div className="container">
+          <p className="biblioteca-doc-em-breve">Esta página estará disponível em breve.</p>
+          <div className="blog-article-back">
+            <Link to="/biblioteca" className="blog-article-back-link">
+              Voltar para a Biblioteca
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   if (status === "loading") {
     return (

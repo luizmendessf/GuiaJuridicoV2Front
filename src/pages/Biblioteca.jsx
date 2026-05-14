@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import LibraryDocumentCard from "../components/cards/LibraryDocumentCard";
 import api, {
   createLibraryDocument,
@@ -19,6 +20,12 @@ const resolveImageUrl = (imagePath) => {
   const base = api.defaults?.baseURL || "";
   return `${base}/images/${imagePath}`;
 };
+
+/**
+ * Biblioteca completa mantida no código abaixo; enquanto `true`, só mostramos "em breve"
+ * (sem pedidos à API). Passar a `false` para reativar lista, modais e gestão.
+ */
+const BIBLIOTECA_EM_BREVE = true;
 
 export default function Biblioteca() {
   const { hasAdminOrOrganizerRole, hasAdminRole } = useAuth();
@@ -63,6 +70,7 @@ export default function Biblioteca() {
   };
 
   useEffect(() => {
+    if (BIBLIOTECA_EM_BREVE) return;
     let active = true;
     const loadPublic = async () => {
       try {
@@ -82,6 +90,7 @@ export default function Biblioteca() {
   }, []);
 
   useEffect(() => {
+    if (BIBLIOTECA_EM_BREVE) return;
     if (!canManage) return;
     if (mode !== "manage") return;
     let active = true;
@@ -351,6 +360,22 @@ export default function Biblioteca() {
           if (manageFilter === "published") return d.published === true;
           return true;
         });
+
+  if (BIBLIOTECA_EM_BREVE) {
+    return (
+      <div className="blog-page biblioteca-page biblioteca-coming">
+        <div className="container">
+          <h1 className="page-title">Biblioteca</h1>
+          <p className="biblioteca-coming__lead">
+            Estamos a preparar materiais e documentos para si. Volte em breve.
+          </p>
+          <Link to="/" className="biblioteca-coming__link">
+            Voltar ao início
+          </Link>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="blog-page biblioteca-page">

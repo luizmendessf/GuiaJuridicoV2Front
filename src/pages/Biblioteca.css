@@ -14,3 +14,34 @@
   width: 100%;
   height: 100%;
 }
+
+/* Página de detalhe em modo "em breve" (ver BIBLIOTECA_EM_BREVE em BibliotecaDocument.jsx) */
+.biblioteca-doc-em-breve {
+  margin-bottom: 1rem;
+  font-size: 1.1rem;
+  color: var(--color-slate-600, #475569);
+}
+
+.biblioteca-coming {
+  padding-block: 3rem 4rem;
+  text-align: center;
+}
+
+.biblioteca-coming .page-title {
+  margin-bottom: 1rem;
+}
+
+.biblioteca-coming__lead {
+  max-width: 28rem;
+  margin: 0 auto 1.5rem;
+  font-size: 1.1rem;
+  line-height: 1.6;
+  color: var(--color-slate-600, #475569);
+}
+
+.biblioteca-coming__link {
+  color: var(--color-primary-600, #0284c7);
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
