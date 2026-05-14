@@ -14,6 +14,7 @@ import LoginPage from "../pages/LoginPage";
 import RegisterPage from "../pages/RegisterPage";
 import UserProfile from "../pages/UserProfile";
 import AdminPage from "../pages/AdminPage";
+import NewsletterCancelar from "../pages/NewsletterCancelar";
 
 // Componente para rotas protegidas
 const ProtectedRoute = ({ children }) => {
@@ -70,6 +71,7 @@ export default function AppRoutes() {
         </OrganizerOrAdminRoute>
       } />
       <Route path="/sobre" element={<Sobre />} />
+      <Route path="/newsletter/cancelar" element={<NewsletterCancelar />} />
       
       {/* Rotas de autenticação */}
       <Route path="/login" element={<LoginPage />} />
