@@ -69,7 +69,16 @@ export default function OpportunityCard({ opportunity, onEdit, onDelete }) {
     <div className={`card opportunity-card status-border--${status}`}>
       <div className="opportunity-card__header">
         <div className="opportunity-card__image-wrapper">
-          <img src={image || "/placeholder.svg"} alt={title} className="opportunity-card__image" />
+          <img
+            src={image || '/placeholder.svg'}
+            alt={title}
+            className="opportunity-card__image"
+            onError={(e) => {
+              const fallback = '/placeholder.svg';
+              if (e.currentTarget.src.endsWith(fallback)) return;
+              e.currentTarget.src = fallback;
+            }}
+          />
           <div className="card-actions">
             <button 
               className={`heart-button ${isSaved ? 'saved' : ''}`}

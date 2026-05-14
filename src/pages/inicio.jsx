@@ -11,6 +11,7 @@ import FeaturesSection from "../components/sections/FeaturesSection";
 import CategoriesSection from "../components/sections/CategoriesSection";
 import AboutSection from "../components/sections/AboutSection";
 import CtaSection from "../components/sections/CtaSection";
+import NewsletterSection from "../components/sections/NewsletterSection";
 
 
 export default function Inicio() {
@@ -44,6 +45,7 @@ export default function Inicio() {
           title="Conheça Nossos Fundadores"
           subtitle="Os fundadores que tornaram o Guia Jurídico uma realidade"
         />
+        <NewsletterSection isReady={isReady} />
         <CtaSection isReady={isReady} />
       </main>
     </div>

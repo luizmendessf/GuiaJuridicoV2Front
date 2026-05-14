@@ -1,0 +1,36 @@
+.newsletter-cancel-page {
+  min-height: 60vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 1rem;
+}
+
+.newsletter-cancel-page__box {
+  max-width: 28rem;
+  text-align: center;
+}
+
+.newsletter-cancel-page__title {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.newsletter-cancel-page__msg {
+  margin-bottom: 1.5rem;
+  line-height: 1.5;
+}
+
+.newsletter-cancel-page__msg.ok {
+  color: var(--color-emerald-700, #047857);
+}
+
+.newsletter-cancel-page__msg.err {
+  color: var(--color-red-600, #dc2626);
+}
+
+.newsletter-cancel-page__home {
+  color: var(--color-primary-600, #0284c7);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
