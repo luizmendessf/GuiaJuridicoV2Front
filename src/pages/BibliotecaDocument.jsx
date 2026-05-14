@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
-import { ExternalLink } from "lucide-react";
+import { Construction, ExternalLink } from "lucide-react";
 import api, { getLibraryDocumentByIdOrSlug } from "../services/apiService";
 import "./BlogArticle.css";
 import "./BibliotecaDocument.css";
@@ -44,9 +44,12 @@ export default function BibliotecaDocument() {
   if (BIBLIOTECA_EM_BREVE) {
     return (
       <div className="blog-article-page biblioteca-doc-page">
-        <div className="container">
+        <div className="container biblioteca-doc-em-breve-layout">
+          <div className="biblioteca-doc-em-breve-icon" aria-hidden>
+            <Construction size={32} strokeWidth={2} />
+          </div>
           <p className="biblioteca-doc-em-breve">Esta página estará disponível em breve.</p>
-          <div className="blog-article-back">
+          <div className="blog-article-back biblioteca-doc-em-breve-back">
             <Link to="/biblioteca" className="blog-article-back-link">
               Voltar para a Biblioteca
             </Link>

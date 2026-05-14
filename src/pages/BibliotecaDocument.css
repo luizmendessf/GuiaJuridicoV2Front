@@ -1,3 +1,32 @@
+/* Modo "em breve" (BIBLIOTECA_EM_BREVE em BibliotecaDocument.jsx) */
+.biblioteca-doc-em-breve-layout {
+  padding-top: 6rem;
+  text-align: center;
+}
+
+.biblioteca-doc-em-breve-back {
+  margin-top: 1.5rem;
+}
+
+.biblioteca-doc-em-breve {
+  margin-bottom: 1rem;
+  font-size: 1.1rem;
+  color: var(--color-slate-600, #475569);
+}
+
+.biblioteca-doc-em-breve-icon {
+  width: 3.5rem;
+  height: 3.5rem;
+  margin: 0 auto 1.25rem;
+  border-radius: 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, var(--color-primary-500), var(--color-primary-700));
+  color: white;
+  box-shadow: 0 8px 24px rgba(14, 165, 233, 0.25);
+}
+
 .biblioteca-doc-page .biblioteca-doc-back {
   display: flex;
   align-items: center;
