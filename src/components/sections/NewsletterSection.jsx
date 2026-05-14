@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
 import { Mail, Users } from "lucide-react";
 import { subscribeNewsletter } from "../../services/apiService";
 import Button from "../ui/button";
@@ -99,11 +98,7 @@ export default function NewsletterSection({ isReady }) {
                   disabled={loading}
                 />
                 <span>
-                  Li e aceito receber e-mails conforme a{" "}
-                  <Link to="/sobre" className="newsletter-section__link">
-                    página Sobre / privacidade
-                  </Link>{" "}
-                  e a base legal aplicável (LGPD).
+                  Li e aceito receber e-mails conforme a base legal aplicável (LGPD).
                 </span>
               </label>
               <button
@@ -111,7 +106,7 @@ export default function NewsletterSection({ isReady }) {
                 className="button button--primary newsletter-section__submit"
                 disabled={loading}
               >
-                {loading ? "Enviando…" : "Inscrever-me"}
+                {loading ? "Enviando…" : "Inscreva-se"}
               </button>
             </form>
             {feedback && <p className="newsletter-section__ok">{feedback}</p>}
@@ -130,7 +125,7 @@ export default function NewsletterSection({ isReady }) {
             </p>
             <div className="newsletter-section__cta-row">
               <Button href={EMBAIXADORES_FORM_URL} variant="primary">
-                Candidatar-me ao programa
+                Candidate-se ao Programa
               </Button>
             </div>
           </div>

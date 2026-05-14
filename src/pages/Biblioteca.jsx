@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { Construction } from "lucide-react";
 import LibraryDocumentCard from "../components/cards/LibraryDocumentCard";
 import api, {
   createLibraryDocument,
@@ -365,9 +366,12 @@ export default function Biblioteca() {
     return (
       <div className="blog-page biblioteca-page biblioteca-coming">
         <div className="container">
+          <div className="biblioteca-coming__icon-wrap" aria-hidden>
+            <Construction size={32} strokeWidth={2} />
+          </div>
           <h1 className="page-title">Biblioteca</h1>
           <p className="biblioteca-coming__lead">
-            Estamos a preparar materiais e documentos para si. Volte em breve.
+            Estamos preparando materiais e documentos para vocês. Volte em breve.
           </p>
           <Link to="/" className="biblioteca-coming__link">
             Voltar ao início
