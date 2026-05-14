@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Mail, Users } from "lucide-react";
 import { subscribeNewsletter } from "../../services/apiService";
-import Button from "../ui/Button";
+import Button from "../ui/button";
 import "../ui/Button.css";
 import "./NewsletterSection.css";
 
