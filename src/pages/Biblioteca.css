@@ -1,5 +1,49 @@
+/* Grade responsiva da biblioteca */
+.biblioteca-list {
+  display: grid;
+  gap: 1.75rem;
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 768px) {
+  .biblioteca-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1280px) {
+  .biblioteca-list {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1600px) {
+  .biblioteca-list {
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  }
+}
+
 .biblioteca-list .library-doc-card__image-wrapper {
-  margin-top: 0.75rem;
+  margin-top: 0;
+  max-width: none;
+}
+
+.biblioteca-upload-hint {
+  margin-top: 0.5rem;
+  font-size: 0.875rem;
+  color: var(--color-gray-600);
+}
+
+.biblioteca-upload-hint--ok {
+  color: #047857;
+}
+
+html.dark .biblioteca-upload-hint {
+  color: var(--color-gray-300);
+}
+
+html.dark .biblioteca-upload-hint--ok {
+  color: #6ee7b7;
 }
 
 .biblioteca-cover-preview {

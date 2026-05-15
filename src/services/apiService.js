@@ -77,7 +77,42 @@ export const uploadImage = (file) => {
 export const uploadLibraryPdf = (file) => {
   const formData = new FormData();
   formData.append('file', file);
-  return api.post('/pdfs/upload', formData);
+  return api.post('/pdfs/upload', formData, {
+    headers: { 'Content-Type': 'multipart/form-data' },
+  });
+};
+
+/** URL pública de imagem (capa) no backend. */
+export const resolveImageUrl = (imagePath) => {
+  if (!imagePath) return null;
+  if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) return imagePath;
+  const base = api.defaults?.baseURL || '';
+  const name = imagePath.includes('/images/')
+    ? imagePath.split('/images/').pop().split('?')[0]
+    : imagePath.replace(/^\/+/, '');
+  return `${base}/images/${name}`;
+};
+
+/** URL pública do PDF armazenado no disco do servidor. */
+export const resolvePdfUrl = (pdfFilename) => {
+  if (!pdfFilename) return null;
+  if (pdfFilename.startsWith('http://') || pdfFilename.startsWith('https://')) return pdfFilename;
+  const base = api.defaults?.baseURL || '';
+  const name = pdfFilename.includes('/pdfs/')
+    ? pdfFilename.split('/pdfs/').pop().split('?')[0]
+    : pdfFilename.replace(/^\/+/, '');
+  return `${base}/pdfs/${encodeURIComponent(name)}`;
+};
+
+/** Capa personalizada ou miniatura gerada a partir da primeira página do PDF. */
+export const resolveLibraryCoverUrl = (doc) => {
+  if (!doc) return null;
+  if (doc.coverImagePath) return resolveImageUrl(doc.coverImagePath);
+  if (doc.pdfFilename) {
+    const base = api.defaults?.baseURL || '';
+    return `${base}/pdfs/${encodeURIComponent(doc.pdfFilename)}/cover`;
+  }
+  return null;
 };
 
 // --- Oportunidade por ID ---
