@@ -1,24 +1,23 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
-import { Construction, ExternalLink } from "lucide-react";
-import api, { getLibraryDocumentByIdOrSlug } from "../services/apiService";
+import { Construction, Download, Maximize2, X } from "lucide-react";
+import BibliotecaPdfViewer from "../components/library/BibliotecaPdfViewer";
+import {
+  getLibraryDocumentByIdOrSlug,
+  resolvePdfUrl,
+} from "../services/apiService";
 import "./BlogArticle.css";
 import "./BibliotecaDocument.css";
 
-const resolveImageUrl = (imagePath) => {
-  if (!imagePath) return null;
-  if (imagePath.startsWith("http://") || imagePath.startsWith("https://")) return imagePath;
-  const base = api.defaults?.baseURL || "";
-  return `${base}/images/${imagePath}`;
-};
-
-/** Alinhado com `Biblioteca.jsx`: enquanto `true`, não carrega documento. */
-const BIBLIOTECA_EM_BREVE = true;
+const BIBLIOTECA_EM_BREVE = false;
 
 export default function BibliotecaDocument() {
   const { idOrSlug } = useParams();
   const [doc, setDoc] = useState(null);
   const [status, setStatus] = useState("loading");
+  const [isExpanded, setIsExpanded] = useState(false);
+
+  const closeExpanded = useCallback(() => setIsExpanded(false), []);
 
   useEffect(() => {
     if (BIBLIOTECA_EM_BREVE) return;
@@ -40,6 +39,20 @@ export default function BibliotecaDocument() {
       active = false;
     };
   }, [idOrSlug]);
+
+  useEffect(() => {
+    if (!isExpanded) return;
+    const onKeyDown = (e) => {
+      if (e.key === "Escape") closeExpanded();
+    };
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    window.addEventListener("keydown", onKeyDown);
+    return () => {
+      document.body.style.overflow = prevOverflow;
+      window.removeEventListener("keydown", onKeyDown);
+    };
+  }, [isExpanded, closeExpanded]);
 
   if (BIBLIOTECA_EM_BREVE) {
     return (
@@ -84,63 +97,86 @@ export default function BibliotecaDocument() {
     );
   }
 
-  const imageUrl = resolveImageUrl(doc.coverImagePath);
-  const previewSrc = doc.drivePreviewUrl;
+  const pdfUrl = resolvePdfUrl(doc.pdfFilename);
 
   return (
     <div className="blog-article-page biblioteca-doc-page">
-      <div className="container">
+      <div className="container biblioteca-doc-container">
         <div className="blog-article-back biblioteca-doc-back">
           <Link to="/biblioteca" className="blog-article-back-link">
             ← Voltar para a Biblioteca
           </Link>
-          {doc.driveViewUrl && (
+          {pdfUrl && (
             <a
-              href={doc.driveViewUrl}
+              href={pdfUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="biblioteca-drive-link"
-              title="Abrir no Google Drive"
+              className="biblioteca-doc-action-link"
+              download
             >
-              <ExternalLink size={14} aria-hidden />
-              <span>Drive</span>
+              <Download size={14} aria-hidden />
+              <span>Baixar PDF</span>
             </a>
           )}
         </div>
 
-        <article className="blog-article biblioteca-doc-article">
-          {imageUrl && (
-            <div className="biblioteca-doc-header-cover">
-              <img src={imageUrl} alt="" className="biblioteca-doc-header-cover__img" />
-            </div>
-          )}
-
-          <header className="blog-article__header">
-            <h1 className="blog-article__title">{doc.title}</h1>
-            <p className="blog-article__subtitle biblioteca-doc-desc">{doc.description}</p>
+        <article className="biblioteca-doc-article">
+          <header className="biblioteca-doc-header">
+            <h1 className="biblioteca-doc-title">{doc.title}</h1>
+            {doc.description && <p className="biblioteca-doc-subtitle">{doc.description}</p>}
           </header>
 
-          {previewSrc ? (
-            <div className="biblioteca-doc-viewer">
-              <iframe
-                title={doc.title}
-                src={previewSrc}
-                className="biblioteca-doc-viewer__iframe"
-                allow="fullscreen"
-              />
-            </div>
+          {pdfUrl ? (
+            <section className="biblioteca-doc-viewer" aria-label="Visualização do PDF">
+              <div className="biblioteca-doc-viewer__toolbar">
+                <button
+                  type="button"
+                  className="biblioteca-doc-viewer__expand-btn"
+                  onClick={() => setIsExpanded(true)}
+                  aria-label="Expandir visualização do PDF"
+                >
+                  <Maximize2 size={16} aria-hidden />
+                  Expandir
+                </button>
+              </div>
+              <div className="biblioteca-doc-viewer__frame-wrap">
+                <BibliotecaPdfViewer pdfUrl={pdfUrl} title={doc.title} variant="compact" />
+              </div>
+            </section>
           ) : (
-            doc.driveViewUrl && (
-              <p className="biblioteca-doc-fallback">
-                Não foi possível montar o visualizador.{" "}
-                <a href={doc.driveViewUrl} target="_blank" rel="noopener noreferrer">
-                  Abrir no Google Drive
-                </a>
-              </p>
-            )
+            <p className="biblioteca-doc-fallback">PDF indisponível.</p>
           )}
         </article>
       </div>
+
+      {isExpanded && pdfUrl && (
+        <div
+          className="biblioteca-pdf-lightbox"
+          role="dialog"
+          aria-modal="true"
+          aria-label={`Visualização em tela cheia: ${doc.title}`}
+          onMouseDown={(e) => {
+            if (e.target === e.currentTarget) closeExpanded();
+          }}
+        >
+          <button
+            type="button"
+            className="biblioteca-pdf-lightbox__close"
+            onClick={closeExpanded}
+            aria-label="Fechar visualização expandida"
+          >
+            <X size={22} strokeWidth={2.5} aria-hidden />
+          </button>
+          <div className="biblioteca-pdf-lightbox__panel">
+            <div className="biblioteca-pdf-lightbox__head">
+              <h2 className="biblioteca-pdf-lightbox__title">{doc.title}</h2>
+            </div>
+            <div className="biblioteca-pdf-lightbox__frame-wrap">
+              <BibliotecaPdfViewer pdfUrl={pdfUrl} title={doc.title} variant="expanded" />
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
