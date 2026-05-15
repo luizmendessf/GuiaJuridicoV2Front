@@ -21,9 +21,9 @@ export default function FeaturesSection() {
     <section className="section features-section">
       <div className="section__bg-gradient"></div>
       <div className="container">
-        <div className="section-header">
-          <h2 className="section-title">O que você encontrará</h2>
-          <p className="section-subtitle">Uma plataforma completa para impulsionar sua carreira jurídica</p>
+        <div className="features-section__header">
+          <h2 className="features-section__title">O que você encontrará</h2>
+          <p className="features-section__subtitle">Uma plataforma completa para impulsionar sua carreira jurídica</p>
         </div>
         <div className="features__grid">
           {featuresData.map((feature, index) => (
