@@ -1,24 +1,24 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import { Construction } from "lucide-react";
 import LibraryDocumentCard from "../components/cards/LibraryDocumentCard";
-import api, {
+import {
   createLibraryDocument,
   deleteLibraryDocument,
   getLibraryDocumentAdminById,
   getLibraryDocuments,
   getLibraryDocumentsAdmin,
+  resolveImageUrl,
+  resolveLibraryCoverUrl,
   updateLibraryDocument,
   uploadImage,
+  uploadLibraryPdf,
 } from "../services/apiService";
 import { useAuth } from "../context/AuthContext";
 import "./Blog.css";
 import "./Biblioteca.css";
 
-const resolveImageUrl = (imagePath) => {
-  if (!imagePath) return null;
-  if (imagePath.startsWith("http://") || imagePath.startsWith("https://")) return imagePath;
-  const base = api.defaults?.baseURL || "";
-  return `${base}/images/${imagePath}`;
-};
+const BIBLIOTECA_EM_BREVE = false;
 
 export default function Biblioteca() {
   const { hasAdminOrOrganizerRole, hasAdminRole } = useAuth();
@@ -45,24 +45,29 @@ export default function Biblioteca() {
     title: "",
     description: "",
     slug: "",
-    driveLinkOrId: "",
+    pdfFilename: "",
     published: false,
   });
+  const [pdfUploading, setPdfUploading] = useState(false);
+  const [autoCoverPreviewUrl, setAutoCoverPreviewUrl] = useState(null);
 
   const resetAddForm = () => {
     setForm({
       title: "",
       description: "",
       slug: "",
-      driveLinkOrId: "",
+      pdfFilename: "",
       published: false,
     });
     setImageFile(null);
     setPreviewUrl(null);
+    setAutoCoverPreviewUrl(null);
+    setPdfUploading(false);
     setModalError("");
   };
 
   useEffect(() => {
+    if (BIBLIOTECA_EM_BREVE) return;
     let active = true;
     const loadPublic = async () => {
       try {
@@ -82,6 +87,7 @@ export default function Biblioteca() {
   }, []);
 
   useEffect(() => {
+    if (BIBLIOTECA_EM_BREVE) return;
     if (!canManage) return;
     if (mode !== "manage") return;
     let active = true;
@@ -120,8 +126,42 @@ export default function Biblioteca() {
   const handleFileChange = (e) => {
     const file = e.target.files?.[0] || null;
     setImageFile(file);
-    if (file) setPreviewUrl(URL.createObjectURL(file));
-    else setPreviewUrl(null);
+    if (file) {
+      setPreviewUrl(URL.createObjectURL(file));
+      setAutoCoverPreviewUrl(null);
+    } else {
+      setPreviewUrl(null);
+      if (form.pdfFilename) {
+        setAutoCoverPreviewUrl(resolveLibraryCoverUrl({ pdfFilename: form.pdfFilename }));
+      }
+    }
+  };
+
+  const handlePdfChange = async (e) => {
+    const file = e.target.files?.[0] || null;
+    if (!file) return;
+    if (!file.name.toLowerCase().endsWith(".pdf")) {
+      setModalError("Selecione um arquivo PDF.");
+      return;
+    }
+    setModalError("");
+    setPdfUploading(true);
+    try {
+      const { data } = await uploadLibraryPdf(file);
+      const filename = data?.filename || data?.url?.split("/pdfs/").pop()?.split("?")[0];
+      if (!filename) {
+        setModalError("Resposta inválida ao enviar o PDF.");
+        return;
+      }
+      setForm((p) => ({ ...p, pdfFilename: filename }));
+      if (!imageFile) {
+        setAutoCoverPreviewUrl(resolveLibraryCoverUrl({ pdfFilename: filename }));
+      }
+    } catch {
+      setModalError("Falha ao enviar o PDF. Tente novamente.");
+    } finally {
+      setPdfUploading(false);
+    }
   };
 
   const handleOpenAdd = () => {
@@ -139,10 +179,10 @@ export default function Biblioteca() {
     const title = form.title.trim();
     const description = form.description.trim();
     const slug = form.slug.trim();
-    const driveLinkOrId = form.driveLinkOrId.trim();
+    const pdfFilename = form.pdfFilename.trim();
 
-    if (!title || !description || !driveLinkOrId) {
-      setModalError("Preencha título, descrição e o link ou ID do arquivo no Google Drive.");
+    if (!title || !description || !pdfFilename) {
+      setModalError("Preencha título, subtítulo e envie o PDF.");
       return;
     }
 
@@ -165,7 +205,7 @@ export default function Biblioteca() {
         description,
         published: !!form.published,
         slug: slug || undefined,
-        driveLinkOrId,
+        pdfFilename,
         coverImagePath: coverImagePath || undefined,
       };
 
@@ -189,7 +229,7 @@ export default function Biblioteca() {
       const status = err?.response?.status;
       if (status === 401) setModalError("Sessão expirada. Faça login novamente.");
       else if (status === 403) setModalError("Sem permissão (apenas ADMIN/ORGANIZADOR).");
-      else if (status === 400) setModalError("Dados inválidos. Confira o link do Google Drive.");
+      else if (status === 400) setModalError(err?.response?.data?.message || "Dados inválidos. Verifique o PDF e os campos.");
       else setModalError("Não foi possível criar o documento. Tente novamente.");
     } finally {
       setSavingAdd(false);
@@ -206,10 +246,12 @@ export default function Biblioteca() {
     title: "",
     description: "",
     slug: "",
-    driveLinkOrId: "",
+    pdfFilename: "",
     published: false,
     coverImagePath: "",
   });
+  const [editPdfUploading, setEditPdfUploading] = useState(false);
+  const [editAutoCoverPreviewUrl, setEditAutoCoverPreviewUrl] = useState(null);
 
   useEffect(() => {
     if (!isEditOpen) return;
@@ -238,10 +280,13 @@ export default function Biblioteca() {
         title: data?.title || "",
         description: data?.description || "",
         slug: data?.slug || "",
-        driveLinkOrId: data?.driveViewUrl || data?.driveFileId || "",
+        pdfFilename: data?.pdfFilename || "",
         published: !!data?.published,
         coverImagePath: data?.coverImagePath || "",
       });
+      setEditAutoCoverPreviewUrl(
+        data?.coverImagePath ? null : resolveLibraryCoverUrl({ pdfFilename: data?.pdfFilename })
+      );
     } catch {
       setEditError("Não foi possível carregar o documento para edição.");
     }
@@ -250,8 +295,42 @@ export default function Biblioteca() {
   const handleEditFileChange = (e) => {
     const file = e.target.files?.[0] || null;
     setEditImageFile(file);
-    if (file) setEditPreviewUrl(URL.createObjectURL(file));
-    else setEditPreviewUrl(null);
+    if (file) {
+      setEditPreviewUrl(URL.createObjectURL(file));
+      setEditAutoCoverPreviewUrl(null);
+    } else {
+      setEditPreviewUrl(null);
+      if (editForm.pdfFilename) {
+        setEditAutoCoverPreviewUrl(resolveLibraryCoverUrl({ pdfFilename: editForm.pdfFilename }));
+      }
+    }
+  };
+
+  const handleEditPdfChange = async (e) => {
+    const file = e.target.files?.[0] || null;
+    if (!file) return;
+    if (!file.name.toLowerCase().endsWith(".pdf")) {
+      setEditError("Selecione um arquivo PDF.");
+      return;
+    }
+    setEditError("");
+    setEditPdfUploading(true);
+    try {
+      const { data } = await uploadLibraryPdf(file);
+      const filename = data?.filename || data?.url?.split("/pdfs/").pop()?.split("?")[0];
+      if (!filename) {
+        setEditError("Resposta inválida ao enviar o PDF.");
+        return;
+      }
+      setEditForm((p) => ({ ...p, pdfFilename: filename }));
+      if (!editImageFile) {
+        setEditAutoCoverPreviewUrl(resolveLibraryCoverUrl({ pdfFilename: filename }));
+      }
+    } catch {
+      setEditError("Falha ao enviar o PDF. Tente novamente.");
+    } finally {
+      setEditPdfUploading(false);
+    }
   };
 
   const refreshAdminList = async () => {
@@ -282,10 +361,10 @@ export default function Biblioteca() {
     const title = editForm.title.trim();
     const description = editForm.description.trim();
     const slug = editForm.slug.trim();
-    const driveLinkOrId = editForm.driveLinkOrId.trim();
+    const pdfFilename = editForm.pdfFilename.trim();
 
-    if (!title || !description || !driveLinkOrId) {
-      setEditError("Preencha título, descrição e o link ou ID do arquivo no Google Drive.");
+    if (!title || !description || !pdfFilename) {
+      setEditError("Preencha título, subtítulo e o PDF.");
       return;
     }
 
@@ -302,7 +381,7 @@ export default function Biblioteca() {
         description,
         published: !!editForm.published,
         slug: slug || undefined,
-        driveLinkOrId,
+        pdfFilename,
         coverImagePath: coverImagePath || undefined,
       };
 
@@ -352,6 +431,25 @@ export default function Biblioteca() {
           return true;
         });
 
+  if (BIBLIOTECA_EM_BREVE) {
+    return (
+      <div className="blog-page biblioteca-page biblioteca-coming">
+        <div className="container">
+          <div className="biblioteca-coming__icon-wrap" aria-hidden>
+            <Construction size={32} strokeWidth={2} />
+          </div>
+          <h1 className="page-title">Biblioteca</h1>
+          <p className="biblioteca-coming__lead">
+            Estamos preparando materiais e documentos para vocês. Volte em breve.
+          </p>
+          <Link to="/" className="biblioteca-coming__link">
+            Voltar ao início
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="blog-page biblioteca-page">
       <div className="container">
@@ -360,8 +458,7 @@ export default function Biblioteca() {
             <div className="header-text">
               <h1 className="page-title">Biblioteca</h1>
               <p className="page-subtitle">
-                PDFs e materiais de consulta. A visualização abre no próprio site quando o arquivo no Google Drive
-                permite incorporação.
+                PDFs e materiais de consulta publicados pela equipe. 
               </p>
             </div>
             {canManage && (
@@ -486,7 +583,7 @@ export default function Biblioteca() {
                 />
               </div>
               <div className="form-group">
-                <label htmlFor="lib-desc">Descrição *</label>
+                <label htmlFor="lib-desc">Subtítulo *</label>
                 <textarea
                   id="lib-desc"
                   rows={4}
@@ -496,15 +593,20 @@ export default function Biblioteca() {
                 />
               </div>
               <div className="form-group">
-                <label htmlFor="lib-drive">Link ou ID do Google Drive *</label>
+                <label htmlFor="lib-pdf">PDF *</label>
                 <input
-                  id="lib-drive"
-                  type="text"
-                  value={form.driveLinkOrId}
-                  onChange={(e) => setForm((p) => ({ ...p, driveLinkOrId: e.target.value }))}
-                  placeholder="https://drive.google.com/file/d/.../view?usp=sharing"
-                  disabled={savingAdd}
+                  id="lib-pdf"
+                  type="file"
+                  accept="application/pdf,.pdf"
+                  onChange={handlePdfChange}
+                  disabled={savingAdd || pdfUploading}
                 />
+                {pdfUploading && <p className="biblioteca-upload-hint">Enviando PDF...</p>}
+                {form.pdfFilename && !pdfUploading && (
+                  <p className="biblioteca-upload-hint biblioteca-upload-hint--ok">
+                    PDF carregado: {form.pdfFilename}
+                  </p>
+                )}
               </div>
               <div className="form-group">
                 <label htmlFor="lib-slug">Slug</label>
@@ -518,12 +620,14 @@ export default function Biblioteca() {
                 />
               </div>
               <div className="form-group">
-                <label htmlFor="lib-cover">Capa (retrato recomendado)</label>
+                <label htmlFor="lib-cover">Capa opcional (gerada automaticamente a partir do PDF)</label>
                 <div className="blog-image-upload">
                   <input id="lib-cover" type="file" accept="image/*" onChange={handleFileChange} disabled={savingAdd} />
                   <div className="blog-image-preview biblioteca-cover-preview">
                     {previewUrl ? (
-                      <img src={previewUrl} alt="Pré-visualização da capa" />
+                      <img src={previewUrl} alt="Prévia da capa" />
+                    ) : autoCoverPreviewUrl ? (
+                      <img src={autoCoverPreviewUrl} alt="Capa gerada a partir do PDF" />
                     ) : (
                       <div className="blog-image-preview__placeholder">Sem imagem</div>
                     )}
@@ -586,7 +690,7 @@ export default function Biblioteca() {
                 />
               </div>
               <div className="form-group">
-                <label htmlFor="lib-edit-desc">Descrição *</label>
+                <label htmlFor="lib-edit-desc">Subtítulo *</label>
                 <textarea
                   id="lib-edit-desc"
                   rows={4}
@@ -596,14 +700,20 @@ export default function Biblioteca() {
                 />
               </div>
               <div className="form-group">
-                <label htmlFor="lib-edit-drive">Link ou ID do Google Drive *</label>
+                <label htmlFor="lib-edit-pdf">PDF *</label>
                 <input
-                  id="lib-edit-drive"
-                  type="text"
-                  value={editForm.driveLinkOrId}
-                  onChange={(e) => setEditForm((p) => ({ ...p, driveLinkOrId: e.target.value }))}
-                  disabled={savingEdit}
+                  id="lib-edit-pdf"
+                  type="file"
+                  accept="application/pdf,.pdf"
+                  onChange={handleEditPdfChange}
+                  disabled={savingEdit || editPdfUploading}
                 />
+                {editPdfUploading && <p className="biblioteca-upload-hint">Enviando PDF...</p>}
+                {editForm.pdfFilename && !editPdfUploading && (
+                  <p className="biblioteca-upload-hint biblioteca-upload-hint--ok">
+                    PDF atual: {editForm.pdfFilename}
+                  </p>
+                )}
               </div>
               <div className="form-group">
                 <label htmlFor="lib-edit-slug">Slug</label>
@@ -616,14 +726,16 @@ export default function Biblioteca() {
                 />
               </div>
               <div className="form-group">
-                <label htmlFor="lib-edit-cover">Capa</label>
+                <label htmlFor="lib-edit-cover">Capa opcional (gerada automaticamente a partir do PDF)</label>
                 <div className="blog-image-upload">
                   <input id="lib-edit-cover" type="file" accept="image/*" onChange={handleEditFileChange} disabled={savingEdit} />
                   <div className="blog-image-preview biblioteca-cover-preview">
                     {editPreviewUrl ? (
-                      <img src={editPreviewUrl} alt="Pré-visualização" />
+                      <img src={editPreviewUrl} alt="Prévia da capa" />
                     ) : resolveImageUrl(editForm.coverImagePath) ? (
                       <img src={resolveImageUrl(editForm.coverImagePath)} alt="Capa atual" />
+                    ) : editAutoCoverPreviewUrl ? (
+                      <img src={editAutoCoverPreviewUrl} alt="Capa gerada a partir do PDF" />
                     ) : (
                       <div className="blog-image-preview__placeholder">Sem imagem</div>
                     )}

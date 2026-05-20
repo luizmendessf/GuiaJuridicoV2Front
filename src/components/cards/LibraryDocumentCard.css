@@ -1,6 +1,13 @@
+.library-doc-card-wrap {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
 .library-doc-card-link {
   display: block;
   text-decoration: none;
+  flex: 1;
 }
 
 .library-doc-card-button {
@@ -18,6 +25,9 @@
   overflow: hidden;
   transition: all 0.5s ease;
   border: 1px solid var(--color-gray-200);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
 .library-doc-card:hover {
@@ -27,12 +37,9 @@
 
 .library-doc-card__image-wrapper {
   position: relative;
-  margin: 0 auto;
   width: 100%;
-  max-width: 12rem;
   aspect-ratio: 3 / 4;
   overflow: hidden;
-  border-radius: 0.5rem;
 }
 
 .library-doc-card__image {
@@ -56,11 +63,63 @@
 .library-doc-card__image-placeholder {
   width: 100%;
   height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-primary-600);
   background: linear-gradient(135deg, var(--color-gray-100), var(--color-gray-200));
 }
 
 .library-doc-card__content {
-  padding-top: 1.25rem;
+  padding: 1.25rem 1.25rem 0.75rem;
+  flex: 1;
+}
+
+.library-doc-card__footer {
+  margin-top: 0.85rem;
+  padding: 0 0.25rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+}
+
+.library-doc-card__open-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.55rem 1rem;
+  border-radius: 0.6rem;
+  font-weight: 700;
+  font-size: 0.9rem;
+  text-decoration: none;
+  color: white;
+  background: linear-gradient(135deg, var(--color-primary-600), var(--color-primary-800));
+  border: none;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 6px 14px -4px rgb(14 116 144 / 0.45);
+}
+
+.library-doc-card__open-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 20px -6px rgb(14 116 144 / 0.5);
+}
+
+.library-doc-card__detail-link {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color-primary-600);
+  text-decoration: none;
+}
+
+.library-doc-card__detail-link:hover {
+  text-decoration: underline;
+}
+
+html.dark .library-doc-card__detail-link {
+  color: var(--color-primary-400);
 }
 
 .library-doc-card__badge {

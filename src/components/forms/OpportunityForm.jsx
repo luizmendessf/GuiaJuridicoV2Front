@@ -147,15 +147,21 @@ const OpportunityForm = ({ opportunity = null, onSave, onCancel, isOpen }) => {
             imageFilenameFromUploadResponse(d?.url || '') ||
             (typeof d === 'string' ? imageFilenameFromUploadResponse(d) : null);
           const storedName = nameFromApi || fromUrl;
-          if (storedName) {
-            submitData.image = storedName;
+          if (!storedName) {
+            setErrors((prev) => ({
+              ...prev,
+              image: 'Upload concluído mas o servidor não devolveu o nome do ficheiro. Tente outra imagem.',
+            }));
+            return;
           }
+          submitData.image = storedName;
         } catch (err) {
           console.error('Falha no upload da imagem:', err);
-          setErrors(prev => ({ ...prev, image: 'Falha ao enviar imagem. Tente novamente.' }));
+          setErrors((prev) => ({ ...prev, image: 'Falha ao enviar imagem. Tente novamente.' }));
+          return;
         }
       }
-      
+
       await onSave(submitData);
     } catch (error) {
       console.error('Erro ao salvar oportunidade:', error);

@@ -22,9 +22,12 @@ const isTokenExpired = (token) => {
 };
 
 // Interceptador para adicionar o token JWT em todas as requisições autenticadas
+// Endpoints públicos (sem enviar JWT). GET da biblioteca NÃO entra aqui: enviamos token se existir,
+// para compatibilidade com proxies e o backend continua permitindo acesso anônimo (permitAll).
 api.interceptors.request.use(async config => {
-  // Endpoints públicos que não precisam de autenticação
-  const url = config.url || '';
+  const rawUrl = config.url || '';
+  const pathOnly = rawUrl.includes('?') ? rawUrl.split('?')[0] : rawUrl;
+  const url = pathOnly.startsWith('/') ? pathOnly : `/${pathOnly}`;
   const method = (config.method || 'get').toLowerCase();
   const isAuthPublic =
     url.startsWith('/auth/login') ||
@@ -33,13 +36,14 @@ api.interceptors.request.use(async config => {
   const isPublicBlogGet =
     method === 'get' &&
     (url === '/blog' || (url.startsWith('/blog/') && !url.startsWith('/blog/admin')));
-  const isPublicBibliotecaGet =
-    method === 'get' &&
-    (url === '/biblioteca' || (url.startsWith('/biblioteca/') && !url.startsWith('/biblioteca/admin')));
+  const isPublicPdfGet = method === 'get' && url.startsWith('/pdfs/');
   const isPublicGet =
     method === 'get' &&
-    (url.startsWith('/oportunidades/todas') || isPublicBlogGet || isPublicBibliotecaGet);
-  const isPublicEndpoint = isAuthPublic || isPublicGet;
+    (url.startsWith('/oportunidades/todas') || isPublicBlogGet || isPublicPdfGet);
+  const isPublicNewsletter =
+    url.startsWith('/public/newsletter/') &&
+    (method === 'post' || method === 'get');
+  const isPublicEndpoint = isAuthPublic || isPublicGet || isPublicNewsletter;
   
   if (!isPublicEndpoint) {
     const token = localStorage.getItem('authToken');
@@ -74,6 +78,47 @@ export const uploadImage = (file) => {
   });
 };
 
+export const uploadLibraryPdf = (file) => {
+  const formData = new FormData();
+  formData.append('file', file);
+  return api.post('/pdfs/upload', formData, {
+    headers: { 'Content-Type': 'multipart/form-data' },
+  });
+};
+
+/** URL pública de imagem (capa) no backend. */
+export const resolveImageUrl = (imagePath) => {
+  if (!imagePath) return null;
+  if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) return imagePath;
+  const base = api.defaults?.baseURL || '';
+  const name = imagePath.includes('/images/')
+    ? imagePath.split('/images/').pop().split('?')[0]
+    : imagePath.replace(/^\/+/, '');
+  return `${base}/images/${name}`;
+};
+
+/** URL pública do PDF armazenado no disco do servidor. */
+export const resolvePdfUrl = (pdfFilename) => {
+  if (!pdfFilename) return null;
+  if (pdfFilename.startsWith('http://') || pdfFilename.startsWith('https://')) return pdfFilename;
+  const base = api.defaults?.baseURL || '';
+  const name = pdfFilename.includes('/pdfs/')
+    ? pdfFilename.split('/pdfs/').pop().split('?')[0]
+    : pdfFilename.replace(/^\/+/, '');
+  return `${base}/pdfs/${encodeURIComponent(name)}`;
+};
+
+/** Capa personalizada ou miniatura gerada a partir da primeira página do PDF. */
+export const resolveLibraryCoverUrl = (doc) => {
+  if (!doc) return null;
+  if (doc.coverImagePath) return resolveImageUrl(doc.coverImagePath);
+  if (doc.pdfFilename) {
+    const base = api.defaults?.baseURL || '';
+    return `${base}/pdfs/${encodeURIComponent(doc.pdfFilename)}/cover`;
+  }
+  return null;
+};
+
 // --- Oportunidade por ID ---
 export const getOportunidadeById = (id) => api.get(`/oportunidades/${id}`);
 
@@ -96,7 +141,7 @@ export const getBlogArticleAdminById = (id) => api.get(`/blog/admin/${id}`);
 export const updateBlogArticle = (id, data) => api.put(`/blog/${id}`, data);
 export const deleteBlogArticle = (id) => api.delete(`/blog/${id}`);
 
-// --- Biblioteca (PDFs / Google Drive) ---
+// --- Biblioteca (PDFs no disco do servidor) ---
 export const getLibraryDocuments = () => api.get('/biblioteca');
 export const getLibraryDocumentByIdOrSlug = (idOrSlug) => api.get(`/biblioteca/${idOrSlug}`);
 export const createLibraryDocument = (data) => api.post('/biblioteca', data);
@@ -104,6 +149,10 @@ export const getLibraryDocumentsAdmin = () => api.get('/biblioteca/admin');
 export const getLibraryDocumentAdminById = (id) => api.get(`/biblioteca/admin/${id}`);
 export const updateLibraryDocument = (id, data) => api.put(`/biblioteca/${id}`, data);
 export const deleteLibraryDocument = (id) => api.delete(`/biblioteca/${id}`);
+
+// --- Newsletter (público) ---
+export const subscribeNewsletter = (data) => api.post('/public/newsletter/subscribe', data);
+export const unsubscribeNewsletter = (data) => api.post('/public/newsletter/unsubscribe', data);
 
 // ... Outras funções (favoritar) virão aqui ...
 
