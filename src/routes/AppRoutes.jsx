@@ -12,6 +12,8 @@ import Biblioteca from "../pages/Biblioteca";
 import BibliotecaDocument from "../pages/BibliotecaDocument";
 import LoginPage from "../pages/LoginPage";
 import RegisterPage from "../pages/RegisterPage";
+import ForgotPasswordPage from "../pages/ForgotPasswordPage";
+import ResetPasswordPage from "../pages/ResetPasswordPage";
 import UserProfile from "../pages/UserProfile";
 import AdminPage from "../pages/AdminPage";
 import NewsletterCancelar from "../pages/NewsletterCancelar";
@@ -76,6 +78,8 @@ export default function AppRoutes() {
       {/* Rotas de autenticação */}
       <Route path="/login" element={<LoginPage />} />
       <Route path="/register" element={<RegisterPage />} />
+      <Route path="/esqueci-senha" element={<ForgotPasswordPage />} />
+      <Route path="/redefinir-senha" element={<ResetPasswordPage />} />
       
       {/* Rotas protegidas */}
       <Route path="/perfil" element={

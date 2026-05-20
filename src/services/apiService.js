@@ -32,7 +32,9 @@ api.interceptors.request.use(async config => {
   const isAuthPublic =
     url.startsWith('/auth/login') ||
     url.startsWith('/auth/register') ||
-    url.startsWith('/auth/google');
+    url.startsWith('/auth/google') ||
+    url.startsWith('/auth/forgot-password') ||
+    url.startsWith('/auth/reset-password');
   const isPublicBlogGet =
     method === 'get' &&
     (url === '/blog' || (url.startsWith('/blog/') && !url.startsWith('/blog/admin')));
@@ -61,6 +63,8 @@ api.interceptors.request.use(async config => {
 export const register = (userData) => api.post('/auth/register', userData);
 export const login = (credentials) => api.post('/auth/login', credentials);
 export const loginWithGoogle = (credential) => api.post('/auth/google', { credential });
+export const forgotPassword = (data) => api.post('/auth/forgot-password', data);
+export const resetPassword = (data) => api.post('/auth/reset-password', data);
 
 // --- Funções de Oportunidades ---
 export const getAllOportunidades = () => api.get('/oportunidades/todas');
