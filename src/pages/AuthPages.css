@@ -61,6 +61,33 @@
   margin-bottom: 1.5rem;
 }
 
+.auth-google {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.auth-google > div {
+  width: 100%;
+}
+
+.auth-divider {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin: 0.25rem 0 0.5rem;
+  color: var(--color-gray-500);
+  font-size: 0.875rem;
+}
+
+.auth-divider::before,
+.auth-divider::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background-color: var(--color-gray-300);
+}
+
 .auth-form {
   display: flex;
   flex-direction: column;
@@ -167,4 +194,13 @@ html.dark .auth-link {
 
 html.dark .auth-link:hover {
   color: var(--color-primary-300);
+}
+
+html.dark .auth-divider {
+  color: var(--color-gray-400);
+}
+
+html.dark .auth-divider::before,
+html.dark .auth-divider::after {
+  background-color: var(--color-gray-600);
 }

@@ -5,6 +5,8 @@ import { User, Mail, Lock, Phone, AlertCircle } from "lucide-react";
 import Button from "../components/ui/button";
 import PasswordInput from "../components/ui/PasswordInput";
 import { register } from "../services/apiService";
+import { useAuth } from "../context/AuthContext";
+import GoogleSignInButton, { isGoogleSignInEnabled } from "../components/auth/GoogleSignInButton";
 import "./AuthPages.css";
 
 export default function RegisterPage() {
@@ -17,6 +19,8 @@ export default function RegisterPage() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const { loginWithGoogle } = useAuth();
+  const [googleLoading, setGoogleLoading] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -37,14 +41,39 @@ export default function RegisterPage() {
       navigate("/login", { state: { message: "Cadastro realizado com sucesso! Faça login para continuar." } });
     } catch (err) {
       console.error("Erro ao cadastrar:", err);
+      const data = err.response?.data;
       setError(
-        err.response?.data?.message ||
+        (typeof data === "string" ? data : data?.message) ||
         "Falha no cadastro. Verifique os dados e tente novamente."
       );
     } finally {
       setLoading(false);
     }
   };
+
+  const handleGoogleSuccess = async (response) => {
+    setError("");
+    setGoogleLoading(true);
+    try {
+      await loginWithGoogle(response.credential);
+      navigate("/");
+    } catch (err) {
+      console.error("Erro ao cadastrar com Google:", err);
+      const data = err.response?.data;
+      setError(
+        (typeof data === "string" ? data : data?.message) ||
+        "Não foi possível continuar com Google. Tente novamente."
+      );
+    } finally {
+      setGoogleLoading(false);
+    }
+  };
+
+  const handleGoogleError = () => {
+    setError("Não foi possível conectar com o Google.");
+  };
+
+  const authBusy = loading || googleLoading;
 
   return (
     <div className="auth-page">
@@ -60,6 +89,19 @@ export default function RegisterPage() {
               <AlertCircle size={18} />
               <span>{error}</span>
             </div>
+          )}
+
+          {isGoogleSignInEnabled() && (
+            <>
+              <GoogleSignInButton
+                onSuccess={handleGoogleSuccess}
+                onError={handleGoogleError}
+                disabled={authBusy}
+              />
+              <div className="auth-divider" aria-hidden="true">
+                <span>ou</span>
+              </div>
+            </>
           )}
 
           <form onSubmit={handleSubmit} className="auth-form">
@@ -133,7 +175,7 @@ export default function RegisterPage() {
               className="auth-button"
               variant="primary"
               type="submit"
-              disabled={loading}
+              disabled={authBusy}
             >
               {loading ? "Cadastrando..." : "Cadastrar"}
             </Button>
