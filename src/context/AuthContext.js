@@ -1,6 +1,6 @@
 // src/context/AuthContext.js
 import React, { createContext, useState, useContext, useEffect } from 'react';
-import api from '../services/apiService';
+import api, { loginWithGoogle as loginWithGoogleApi } from '../services/apiService';
 import { jwtDecode } from "jwt-decode"; // Instale com: npm install jwt-decode
 
 const AuthContext = createContext(null);
@@ -49,21 +49,32 @@ export const AuthProvider = ({ children }) => {
     setLoading(false);
   }, []);
 
+  const persistToken = (token) => {
+    if (!token) {
+      throw new Error('Token não recebido do servidor');
+    }
+    localStorage.setItem('authToken', token);
+    setUser(jwtDecode(token));
+  };
+
   const login = async (credentials) => {
     try {
       const response = await api.post('/auth/login', credentials);
-      const { token } = response.data;
-      
-      if (token) {
-        localStorage.setItem('authToken', token);
-        const decodedUser = jwtDecode(token);
-        setUser(decodedUser);
-        return response;
-      } else {
-        throw new Error('Token não recebido do servidor');
-      }
+      persistToken(response.data?.token);
+      return response;
     } catch (error) {
       console.error('Erro no login:', error);
+      throw error;
+    }
+  };
+
+  const loginWithGoogle = async (credential) => {
+    try {
+      const response = await loginWithGoogleApi(credential);
+      persistToken(response.data?.token);
+      return response;
+    } catch (error) {
+      console.error('Erro no login com Google:', error);
       throw error;
     }
   };
@@ -99,6 +110,7 @@ export const AuthProvider = ({ children }) => {
   const value = {
     user,
     login,
+    loginWithGoogle,
     logout,
     isAuthenticated: !!user,
     authToken: getValidToken(),

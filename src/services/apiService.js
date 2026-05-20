@@ -29,7 +29,10 @@ api.interceptors.request.use(async config => {
   const pathOnly = rawUrl.includes('?') ? rawUrl.split('?')[0] : rawUrl;
   const url = pathOnly.startsWith('/') ? pathOnly : `/${pathOnly}`;
   const method = (config.method || 'get').toLowerCase();
-  const isAuthPublic = url.startsWith('/auth/login') || url.startsWith('/auth/register');
+  const isAuthPublic =
+    url.startsWith('/auth/login') ||
+    url.startsWith('/auth/register') ||
+    url.startsWith('/auth/google');
   const isPublicBlogGet =
     method === 'get' &&
     (url === '/blog' || (url.startsWith('/blog/') && !url.startsWith('/blog/admin')));
@@ -57,6 +60,7 @@ api.interceptors.request.use(async config => {
 // --- Funções de Autenticação ---
 export const register = (userData) => api.post('/auth/register', userData);
 export const login = (credentials) => api.post('/auth/login', credentials);
+export const loginWithGoogle = (credential) => api.post('/auth/google', { credential });
 
 // --- Funções de Oportunidades ---
 export const getAllOportunidades = () => api.get('/oportunidades/todas');

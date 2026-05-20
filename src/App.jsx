@@ -15,8 +15,11 @@ import Footer from "./components/layout/footer";
 import AppRoutes from "./routes/AppRoutes";
 
 // Importe o AuthProvider e FavoritesProvider
+import { GoogleOAuthProvider } from "@react-oauth/google";
 import { AuthProvider } from "./context/AuthContext";
 import { FavoritesProvider } from "./context/FavoritesContext";
+
+const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID?.trim() || "";
 
 const GA_MEASUREMENT_ID = "G-6LCNVZVFV5";
 const COOKIE_CONSENT_KEY = "cookieConsent.xanalytics";
@@ -139,7 +142,7 @@ function App() {
     setAnalyticsConsent("declined");
   };
 
-  return (
+  const appTree = (
     <AuthProvider>
       <FavoritesProvider>
           <Router >
@@ -160,6 +163,12 @@ function App() {
         </FavoritesProvider>
     </AuthProvider>
   );
+
+  if (googleClientId) {
+    return <GoogleOAuthProvider clientId={googleClientId}>{appTree}</GoogleOAuthProvider>;
+  }
+
+  return appTree;
 }
 
 export default App;
