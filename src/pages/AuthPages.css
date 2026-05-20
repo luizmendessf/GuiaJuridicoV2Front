@@ -160,6 +160,15 @@
   text-decoration: underline;
 }
 
+.auth-link--small {
+  font-size: 0.875rem;
+}
+
+.auth-forgot-row {
+  margin: 0.25rem 0 0;
+  text-align: right;
+}
+
 /* Dark mode support */
 html.dark .auth-page {
   background-color: var(--color-gray-900);
@@ -203,6 +212,10 @@ html.dark .auth-link {
 
 html.dark .auth-link:hover {
   color: var(--color-primary-300);
+}
+
+html.dark .auth-forgot-row {
+  color: var(--color-gray-400);
 }
 
 html.dark .auth-divider {

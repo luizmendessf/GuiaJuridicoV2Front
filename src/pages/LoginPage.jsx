@@ -142,6 +142,11 @@ export default function LoginPage() {
                 placeholder="Sua senha"
                 required
               />
+              <p className="auth-forgot-row">
+                <Link to="/esqueci-senha" className="auth-link auth-link--small">
+                  Esqueceu sua senha?
+                </Link>
+              </p>
             </div>
 
             <Button
