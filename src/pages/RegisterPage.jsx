@@ -118,6 +118,7 @@ export default function RegisterPage() {
                 onChange={handleChange}
                 className="form-input"
                 placeholder="Seu nome completo"
+                maxLength={120}
                 required
               />
             </div>
@@ -135,6 +136,7 @@ export default function RegisterPage() {
                 onChange={handleChange}
                 className="form-input"
                 placeholder="seu@email.com"
+                maxLength={255}
                 required
               />
             </div>
@@ -150,6 +152,7 @@ export default function RegisterPage() {
                 value={formData.senha}
                 onChange={handleChange}
                 placeholder="Crie uma senha segura"
+                maxLength={128}
                 required
               />
             </div>
@@ -167,6 +170,7 @@ export default function RegisterPage() {
                 onChange={handleChange}
                 className="form-input"
                 placeholder="(00) 00000-0000"
+                maxLength={20}
                 required
               />
             </div>
