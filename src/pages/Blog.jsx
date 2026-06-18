@@ -10,6 +10,8 @@ import api, {
   uploadImage,
 } from "../services/apiService";
 import { useAuth } from "../context/AuthContext";
+import BlogArticleEditor from "../components/forms/BlogArticleEditor";
+import { isBlogContentEmpty } from "../utils/blogContent";
 import "./Blog.css";
 
 const resolveImageUrl = (imagePath) => {
@@ -147,10 +149,10 @@ export default function Blog() {
 
     const title = form.title.trim();
     const subtitle = form.subtitle.trim();
-    const content = form.content.trim();
+    const content = form.content;
     const slug = form.slug.trim();
 
-    if (!title || !subtitle || !content) {
+    if (!title || !subtitle || isBlogContentEmpty(content)) {
       setModalError("Preencha título, subtítulo e conteúdo.");
       return;
     }
@@ -298,10 +300,10 @@ export default function Blog() {
 
     const title = editForm.title.trim();
     const subtitle = editForm.subtitle.trim();
-    const content = editForm.content.trim();
+    const content = editForm.content;
     const slug = editForm.slug.trim();
 
-    if (!title || !subtitle || !content) {
+    if (!title || !subtitle || isBlogContentEmpty(content)) {
       setEditError("Preencha título, subtítulo e conteúdo.");
       return;
     }
@@ -491,7 +493,7 @@ export default function Blog() {
             if (e.target === e.currentTarget) setIsAddOpen(false);
           }}
         >
-          <div className="blog-modal">
+          <div className="blog-modal blog-modal--article">
             <div className="blog-modal__header">
               <h2 className="blog-modal__title">Novo artigo</h2>
               <button
@@ -504,70 +506,75 @@ export default function Blog() {
               </button>
             </div>
 
-            <form className="blog-modal__body blog-modal-form" onSubmit={handleSubmitAdd}>
+            <form className="blog-modal__body blog-modal-form blog-modal-form--article" onSubmit={handleSubmitAdd}>
               {modalError && <div className="blog-modal__error">{modalError}</div>}
 
-              <div className="form-group">
-                <label htmlFor="blog-title">Título *</label>
-                <input
-                  id="blog-title"
-                  type="text"
-                  value={form.title}
-                  onChange={(e) => setForm((prev) => ({ ...prev, title: e.target.value }))}
-                  disabled={savingAdd}
-                />
-              </div>
-
-              <div className="form-group">
-                <label htmlFor="blog-subtitle">Subtítulo *</label>
-                <input
-                  id="blog-subtitle"
-                  type="text"
-                  value={form.subtitle}
-                  onChange={(e) => setForm((prev) => ({ ...prev, subtitle: e.target.value }))}
-                  disabled={savingAdd}
-                />
-              </div>
-
-              <div className="form-group">
-                <label htmlFor="blog-slug">Slug</label>
-                <input
-                  id="blog-slug"
-                  type="text"
-                  value={form.slug}
-                  onChange={(e) => setForm((prev) => ({ ...prev, slug: e.target.value }))}
-                  placeholder="Opcional (se vazio, será gerado pelo título)"
-                  disabled={savingAdd}
-                />
-              </div>
-
-              <div className="form-group">
-                <label htmlFor="blog-image">Imagem</label>
-                <div className="blog-image-upload">
+              <div className="blog-modal-form__meta">
+                <div className="form-group blog-modal-form__slug">
+                  <label htmlFor="blog-slug">Slug</label>
                   <input
-                    id="blog-image"
-                    type="file"
-                    accept="image/*"
-                    onChange={handleFileChange}
+                    id="blog-slug"
+                    type="text"
+                    value={form.slug}
+                    onChange={(e) => setForm((prev) => ({ ...prev, slug: e.target.value }))}
+                    placeholder="Opcional (se vazio, será gerado pelo título)"
                     disabled={savingAdd}
                   />
-                  <div className="blog-image-preview">
-                    {previewUrl ? (
-                      <img src={previewUrl} alt="Pré-visualização" />
-                    ) : (
-                      <div className="blog-image-preview__placeholder">Sem imagem selecionada</div>
-                    )}
-                  </div>
                 </div>
               </div>
 
-              <div className="form-group">
-                <label htmlFor="blog-content">Conteúdo *</label>
-                <textarea
+              <div className="blog-modal-form__preview">
+                <div className="form-group blog-modal-form__title-group">
+                  <label htmlFor="blog-title">Título *</label>
+                  <input
+                    id="blog-title"
+                    type="text"
+                    className="blog-modal-form__title-input"
+                    value={form.title}
+                    onChange={(e) => setForm((prev) => ({ ...prev, title: e.target.value }))}
+                    placeholder="Título do artigo"
+                    disabled={savingAdd}
+                  />
+                </div>
+
+                <div className="form-group blog-modal-form__subtitle-group">
+                  <label htmlFor="blog-subtitle">Subtítulo *</label>
+                  <input
+                    id="blog-subtitle"
+                    type="text"
+                    className="blog-modal-form__subtitle-input"
+                    value={form.subtitle}
+                    onChange={(e) => setForm((prev) => ({ ...prev, subtitle: e.target.value }))}
+                    placeholder="Subtítulo do artigo"
+                    disabled={savingAdd}
+                  />
+                </div>
+
+                <div className="form-group blog-modal-form__cover-group">
+                  <label htmlFor="blog-image">Imagem de capa</label>
+                  <div className="blog-image-upload">
+                    <input
+                      id="blog-image"
+                      type="file"
+                      accept="image/*"
+                      onChange={handleFileChange}
+                      disabled={savingAdd}
+                    />
+                    <div className="blog-image-preview blog-image-preview--cover">
+                      {previewUrl ? (
+                        <img src={previewUrl} alt="Pré-visualização" />
+                      ) : (
+                        <div className="blog-image-preview__placeholder">Sem imagem selecionada</div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                <BlogArticleEditor
+                  key="blog-add-content"
                   id="blog-content"
-                  rows={10}
                   value={form.content}
-                  onChange={(e) => setForm((prev) => ({ ...prev, content: e.target.value }))}
+                  onChange={(content) => setForm((prev) => ({ ...prev, content }))}
                   disabled={savingAdd}
                 />
               </div>
@@ -613,7 +620,7 @@ export default function Blog() {
             if (e.target === e.currentTarget) setIsEditOpen(false);
           }}
         >
-          <div className="blog-modal">
+          <div className="blog-modal blog-modal--article">
             <div className="blog-modal__header">
               <h2 className="blog-modal__title">Editar artigo</h2>
               <button
@@ -626,72 +633,77 @@ export default function Blog() {
               </button>
             </div>
 
-            <form className="blog-modal__body blog-modal-form" onSubmit={handleSubmitEdit}>
+            <form className="blog-modal__body blog-modal-form blog-modal-form--article" onSubmit={handleSubmitEdit}>
               {editError && <div className="blog-modal__error">{editError}</div>}
 
-              <div className="form-group">
-                <label htmlFor="blog-edit-title">Título *</label>
-                <input
-                  id="blog-edit-title"
-                  type="text"
-                  value={editForm.title}
-                  onChange={(e) => setEditForm((prev) => ({ ...prev, title: e.target.value }))}
-                  disabled={savingEdit}
-                />
-              </div>
-
-              <div className="form-group">
-                <label htmlFor="blog-edit-subtitle">Subtítulo *</label>
-                <input
-                  id="blog-edit-subtitle"
-                  type="text"
-                  value={editForm.subtitle}
-                  onChange={(e) => setEditForm((prev) => ({ ...prev, subtitle: e.target.value }))}
-                  disabled={savingEdit}
-                />
-              </div>
-
-              <div className="form-group">
-                <label htmlFor="blog-edit-slug">Slug</label>
-                <input
-                  id="blog-edit-slug"
-                  type="text"
-                  value={editForm.slug}
-                  onChange={(e) => setEditForm((prev) => ({ ...prev, slug: e.target.value }))}
-                  placeholder="Opcional (se vazio, será gerado pelo título)"
-                  disabled={savingEdit}
-                />
-              </div>
-
-              <div className="form-group">
-                <label htmlFor="blog-edit-image">Imagem</label>
-                <div className="blog-image-upload">
+              <div className="blog-modal-form__meta">
+                <div className="form-group blog-modal-form__slug">
+                  <label htmlFor="blog-edit-slug">Slug</label>
                   <input
-                    id="blog-edit-image"
-                    type="file"
-                    accept="image/*"
-                    onChange={handleEditFileChange}
+                    id="blog-edit-slug"
+                    type="text"
+                    value={editForm.slug}
+                    onChange={(e) => setEditForm((prev) => ({ ...prev, slug: e.target.value }))}
+                    placeholder="Opcional (se vazio, será gerado pelo título)"
                     disabled={savingEdit}
                   />
-                  <div className="blog-image-preview">
-                    {editPreviewUrl ? (
-                      <img src={editPreviewUrl} alt="Pré-visualização" />
-                    ) : resolveImageUrl(editForm.imagePath) ? (
-                      <img src={resolveImageUrl(editForm.imagePath)} alt="Imagem atual" />
-                    ) : (
-                      <div className="blog-image-preview__placeholder">Sem imagem selecionada</div>
-                    )}
-                  </div>
                 </div>
               </div>
 
-              <div className="form-group">
-                <label htmlFor="blog-edit-content">Conteúdo *</label>
-                <textarea
+              <div className="blog-modal-form__preview">
+                <div className="form-group blog-modal-form__title-group">
+                  <label htmlFor="blog-edit-title">Título *</label>
+                  <input
+                    id="blog-edit-title"
+                    type="text"
+                    className="blog-modal-form__title-input"
+                    value={editForm.title}
+                    onChange={(e) => setEditForm((prev) => ({ ...prev, title: e.target.value }))}
+                    placeholder="Título do artigo"
+                    disabled={savingEdit}
+                  />
+                </div>
+
+                <div className="form-group blog-modal-form__subtitle-group">
+                  <label htmlFor="blog-edit-subtitle">Subtítulo *</label>
+                  <input
+                    id="blog-edit-subtitle"
+                    type="text"
+                    className="blog-modal-form__subtitle-input"
+                    value={editForm.subtitle}
+                    onChange={(e) => setEditForm((prev) => ({ ...prev, subtitle: e.target.value }))}
+                    placeholder="Subtítulo do artigo"
+                    disabled={savingEdit}
+                  />
+                </div>
+
+                <div className="form-group blog-modal-form__cover-group">
+                  <label htmlFor="blog-edit-image">Imagem de capa</label>
+                  <div className="blog-image-upload">
+                    <input
+                      id="blog-edit-image"
+                      type="file"
+                      accept="image/*"
+                      onChange={handleEditFileChange}
+                      disabled={savingEdit}
+                    />
+                    <div className="blog-image-preview blog-image-preview--cover">
+                      {editPreviewUrl ? (
+                        <img src={editPreviewUrl} alt="Pré-visualização" />
+                      ) : resolveImageUrl(editForm.imagePath) ? (
+                        <img src={resolveImageUrl(editForm.imagePath)} alt="Imagem atual" />
+                      ) : (
+                        <div className="blog-image-preview__placeholder">Sem imagem selecionada</div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                <BlogArticleEditor
+                  key={`blog-edit-content-${editingId ?? "none"}`}
                   id="blog-edit-content"
-                  rows={10}
                   value={editForm.content}
-                  onChange={(e) => setEditForm((prev) => ({ ...prev, content: e.target.value }))}
+                  onChange={(content) => setEditForm((prev) => ({ ...prev, content }))}
                   disabled={savingEdit}
                 />
               </div>

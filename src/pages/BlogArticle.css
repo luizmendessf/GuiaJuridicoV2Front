@@ -88,11 +88,102 @@ html.dark .blog-article__subtitle {
   color: var(--color-gray-700);
   line-height: 1.9;
   font-size: 1.05rem;
+}
+
+.blog-article__content--plain {
   white-space: pre-wrap;
+}
+
+.blog-article__content--html p {
+  margin: 0 0 1rem;
+}
+
+.blog-article__content--html p:last-child {
+  margin-bottom: 0;
+}
+
+.blog-article__content--html h2 {
+  font-size: 1.6rem;
+  font-weight: 700;
+  margin: 1.5rem 0 0.75rem;
+  color: var(--color-gray-900);
+}
+
+.blog-article__content--html h3 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin: 1.25rem 0 0.65rem;
+  color: var(--color-gray-900);
+}
+
+.blog-article__content--html ul,
+.blog-article__content--html ol {
+  margin: 0 0 1rem 1.5rem;
+  padding: 0;
+}
+
+.blog-article__content--html li {
+  margin-bottom: 0.35rem;
+}
+
+.blog-article__content--html blockquote {
+  margin: 0 0 1rem;
+  padding: 0.75rem 1rem;
+  border-left: 4px solid var(--color-primary-300);
+  background: var(--color-gray-100);
+  color: var(--color-gray-700);
+}
+
+.blog-article__content--html a {
+  color: var(--color-primary-600);
+  text-decoration: underline;
+  font-weight: 600;
+  word-break: break-word;
+}
+
+.blog-article__content--html a:hover {
+  color: var(--color-primary-800);
+}
+
+.blog-article__content--html img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 0.5rem;
+  margin: 1rem 0;
+}
+
+.blog-article__content--html img[style*="text-align: center"] {
+  display: block;
+  margin-inline: auto;
+}
+
+.blog-article__content--html img[style*="text-align: right"] {
+  display: block;
+  margin-left: auto;
+  margin-right: 0;
 }
 
 html.dark .blog-article__content {
   color: var(--color-gray-200);
+}
+
+html.dark .blog-article__content--html h2,
+html.dark .blog-article__content--html h3 {
+  color: var(--color-gray-100);
+}
+
+html.dark .blog-article__content--html blockquote {
+  background: var(--color-gray-800);
+  border-color: var(--color-primary-500);
+  color: var(--color-gray-300);
+}
+
+html.dark .blog-article__content--html a {
+  color: #93c5fd;
+}
+
+html.dark .blog-article__content--html a:hover {
+  color: #bfdbfe;
 }
 
 .blog-article-state {
