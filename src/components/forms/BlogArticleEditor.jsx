@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { useEditor, EditorContent } from "@tiptap/react";
+import { useEditor, EditorContent, useEditorState } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Link from "@tiptap/extension-link";
 import TextAlign from "@tiptap/extension-text-align";
@@ -27,6 +27,26 @@ function ToolbarButton({ onClick, active, disabled, title, children }) {
 function ToolbarDivider() {
   return <span className="blog-editor__divider" aria-hidden="true" />;
 }
+
+const EMPTY_TOOLBAR_STATE = {
+  isBold: false,
+  isItalic: false,
+  isUnderline: false,
+  isStrike: false,
+  isH2: false,
+  isH3: false,
+  isBulletList: false,
+  isOrderedList: false,
+  isBlockquote: false,
+  alignLeft: false,
+  alignCenter: false,
+  alignRight: false,
+  alignJustify: false,
+  isLink: false,
+  isImage: false,
+  canUndo: false,
+  canRedo: false,
+};
 
 export default function BlogArticleEditor({ id, value, onChange, disabled = false, label = "Conteúdo *" }) {
   const fileInputRef = useRef(null);
@@ -101,6 +121,31 @@ export default function BlogArticleEditor({ id, value, onChange, disabled = fals
     },
   });
 
+  const toolbar = useEditorState({
+    editor,
+    selector: ({ editor: currentEditor }) => ({
+      isBold: currentEditor.isActive("bold"),
+      isItalic: currentEditor.isActive("italic"),
+      isUnderline: currentEditor.isActive("underline"),
+      isStrike: currentEditor.isActive("strike"),
+      isH2: currentEditor.isActive("heading", { level: 2 }),
+      isH3: currentEditor.isActive("heading", { level: 3 }),
+      isBulletList: currentEditor.isActive("bulletList"),
+      isOrderedList: currentEditor.isActive("orderedList"),
+      isBlockquote: currentEditor.isActive("blockquote"),
+      alignLeft: currentEditor.isActive({ textAlign: "left" }),
+      alignCenter: currentEditor.isActive({ textAlign: "center" }),
+      alignRight: currentEditor.isActive({ textAlign: "right" }),
+      alignJustify: currentEditor.isActive({ textAlign: "justify" }),
+      isLink: currentEditor.isActive("link"),
+      isImage: currentEditor.isActive("image"),
+      canUndo: currentEditor.can().undo(),
+      canRedo: currentEditor.can().redo(),
+    }),
+  });
+
+  const t = toolbar ?? EMPTY_TOOLBAR_STATE;
+
   const insertImageFromFile = useCallback(
     async (file) => {
       if (!editor || !file || !file.type.startsWith("image/")) return;
@@ -173,7 +218,7 @@ export default function BlogArticleEditor({ id, value, onChange, disabled = fals
     event.target.value = "";
   };
 
-  const imageSelected = editor?.isActive("image");
+  const imageSelected = t.isImage;
 
   if (!editor) {
     return (
@@ -200,7 +245,7 @@ export default function BlogArticleEditor({ id, value, onChange, disabled = fals
         <div className="blog-editor__toolbar" role="toolbar" aria-label="Formatação do conteúdo">
           <ToolbarButton
             onClick={() => editor.chain().focus().toggleBold().run()}
-            active={editor.isActive("bold")}
+            active={t.isBold}
             disabled={disabled}
             title="Negrito"
           >
@@ -208,7 +253,7 @@ export default function BlogArticleEditor({ id, value, onChange, disabled = fals
           </ToolbarButton>
           <ToolbarButton
             onClick={() => editor.chain().focus().toggleItalic().run()}
-            active={editor.isActive("italic")}
+            active={t.isItalic}
             disabled={disabled}
             title="Itálico"
           >
@@ -216,7 +261,7 @@ export default function BlogArticleEditor({ id, value, onChange, disabled = fals
           </ToolbarButton>
           <ToolbarButton
             onClick={() => editor.chain().focus().toggleUnderline().run()}
-            active={editor.isActive("underline")}
+            active={t.isUnderline}
             disabled={disabled}
             title="Sublinhado"
           >
@@ -224,7 +269,7 @@ export default function BlogArticleEditor({ id, value, onChange, disabled = fals
           </ToolbarButton>
           <ToolbarButton
             onClick={() => editor.chain().focus().toggleStrike().run()}
-            active={editor.isActive("strike")}
+            active={t.isStrike}
             disabled={disabled}
             title="Tachado"
           >
@@ -235,7 +280,7 @@ export default function BlogArticleEditor({ id, value, onChange, disabled = fals
 
           <ToolbarButton
             onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
-            active={editor.isActive("heading", { level: 2 })}
+            active={t.isH2}
             disabled={disabled}
             title="Título H2"
           >
@@ -243,7 +288,7 @@ export default function BlogArticleEditor({ id, value, onChange, disabled = fals
           </ToolbarButton>
           <ToolbarButton
             onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
-            active={editor.isActive("heading", { level: 3 })}
+            active={t.isH3}
             disabled={disabled}
             title="Título H3"
           >
@@ -254,7 +299,7 @@ export default function BlogArticleEditor({ id, value, onChange, disabled = fals
 
           <ToolbarButton
             onClick={() => editor.chain().focus().toggleBulletList().run()}
-            active={editor.isActive("bulletList")}
+            active={t.isBulletList}
             disabled={disabled}
             title="Lista com marcadores"
           >
@@ -262,7 +307,7 @@ export default function BlogArticleEditor({ id, value, onChange, disabled = fals
           </ToolbarButton>
           <ToolbarButton
             onClick={() => editor.chain().focus().toggleOrderedList().run()}
-            active={editor.isActive("orderedList")}
+            active={t.isOrderedList}
             disabled={disabled}
             title="Lista numerada"
           >
@@ -270,7 +315,7 @@ export default function BlogArticleEditor({ id, value, onChange, disabled = fals
           </ToolbarButton>
           <ToolbarButton
             onClick={() => editor.chain().focus().toggleBlockquote().run()}
-            active={editor.isActive("blockquote")}
+            active={t.isBlockquote}
             disabled={disabled}
             title="Citação"
           >
@@ -292,7 +337,7 @@ export default function BlogArticleEditor({ id, value, onChange, disabled = fals
 
           <ToolbarButton
             onClick={() => editor.chain().focus().setTextAlign("left").run()}
-            active={editor.isActive({ textAlign: "left" })}
+            active={t.alignLeft}
             disabled={disabled}
             title="Alinhar à esquerda"
           >
@@ -300,7 +345,7 @@ export default function BlogArticleEditor({ id, value, onChange, disabled = fals
           </ToolbarButton>
           <ToolbarButton
             onClick={() => editor.chain().focus().setTextAlign("center").run()}
-            active={editor.isActive({ textAlign: "center" })}
+            active={t.alignCenter}
             disabled={disabled}
             title="Centralizar"
           >
@@ -308,7 +353,7 @@ export default function BlogArticleEditor({ id, value, onChange, disabled = fals
           </ToolbarButton>
           <ToolbarButton
             onClick={() => editor.chain().focus().setTextAlign("right").run()}
-            active={editor.isActive({ textAlign: "right" })}
+            active={t.alignRight}
             disabled={disabled}
             title="Alinhar à direita"
           >
@@ -316,7 +361,7 @@ export default function BlogArticleEditor({ id, value, onChange, disabled = fals
           </ToolbarButton>
           <ToolbarButton
             onClick={() => editor.chain().focus().setTextAlign("justify").run()}
-            active={editor.isActive({ textAlign: "justify" })}
+            active={t.alignJustify}
             disabled={disabled || imageSelected}
             title="Justificar"
           >
@@ -327,7 +372,7 @@ export default function BlogArticleEditor({ id, value, onChange, disabled = fals
 
           <ToolbarButton
             onClick={setLink}
-            active={editor.isActive("link")}
+            active={t.isLink}
             disabled={disabled}
             title="Inserir ou editar link"
           >
@@ -336,7 +381,7 @@ export default function BlogArticleEditor({ id, value, onChange, disabled = fals
           <ToolbarButton
             onClick={() => editor.chain().focus().unsetLink().run()}
             active={false}
-            disabled={disabled || !editor.isActive("link")}
+            disabled={disabled || !t.isLink}
             title="Remover link"
           >
             ✕ Link
@@ -347,7 +392,7 @@ export default function BlogArticleEditor({ id, value, onChange, disabled = fals
           <ToolbarButton
             onClick={() => editor.chain().focus().undo().run()}
             active={false}
-            disabled={disabled || !editor.can().undo()}
+            disabled={disabled || !t.canUndo}
             title="Desfazer"
           >
             ↶
@@ -355,7 +400,7 @@ export default function BlogArticleEditor({ id, value, onChange, disabled = fals
           <ToolbarButton
             onClick={() => editor.chain().focus().redo().run()}
             active={false}
-            disabled={disabled || !editor.can().redo()}
+            disabled={disabled || !t.canRedo}
             title="Refazer"
           >
             ↷

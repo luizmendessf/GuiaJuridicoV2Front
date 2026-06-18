@@ -92,6 +92,51 @@
   outline: none;
 }
 
+.blog-modal-form--article .blog-editor__content,
+.blog-modal-form--article .blog-editor .ProseMirror {
+  min-height: 360px;
+  max-height: calc(94vh - 560px);
+  padding: 1rem 1.25rem 1.25rem;
+  font-size: 1.05rem;
+  line-height: 1.9;
+  color: var(--color-gray-700);
+}
+
+.blog-modal-form--article .blog-editor {
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.blog-modal-form--article .blog-editor:focus-within {
+  border: none;
+  box-shadow: none;
+}
+
+.blog-modal-form--article .blog-editor__toolbar,
+.blog-modal-form--article .blog-editor__hint {
+  border-radius: 0.65rem;
+}
+
+.blog-modal-form--article .blog-editor__toolbar {
+  margin-bottom: 0.75rem;
+  border: 1px solid var(--color-gray-200);
+}
+
+.blog-modal-form--article .blog-editor__hint {
+  border: 1px solid var(--color-gray-200);
+  border-bottom: none;
+  border-radius: 0.65rem 0.65rem 0 0;
+}
+
+.blog-modal-form--article .blog-editor__content,
+.blog-modal-form--article .blog-editor .ProseMirror {
+  border: 1px solid var(--color-gray-200);
+  border-top: none;
+  border-radius: 0 0 0.65rem 0.65rem;
+  background: white;
+}
+
 .blog-editor__content p,
 .blog-editor .ProseMirror p {
   margin: 0 0 0.85rem;
@@ -182,6 +227,19 @@ html.dark .blog-editor .ProseMirror blockquote {
   background: #111827;
   border-color: #3b82f6;
   color: var(--color-gray-300);
+}
+
+html.dark .blog-modal-form--article .blog-editor__content,
+html.dark .blog-modal-form--article .blog-editor .ProseMirror {
+  background: #0f172a;
+  border-color: #334155;
+  color: var(--color-gray-200);
+}
+
+html.dark .blog-modal-form--article .blog-editor__toolbar,
+html.dark .blog-modal-form--article .blog-editor__hint,
+html.dark .blog-modal-form--article .blog-editor .ProseMirror {
+  border-color: #334155;
 }
 
 html.dark .blog-editor__content a,
