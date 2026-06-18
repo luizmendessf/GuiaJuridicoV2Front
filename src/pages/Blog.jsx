@@ -10,6 +10,8 @@ import api, {
   uploadImage,
 } from "../services/apiService";
 import { useAuth } from "../context/AuthContext";
+import BlogArticleEditor from "../components/forms/BlogArticleEditor";
+import { isBlogContentEmpty } from "../utils/blogContent";
 import "./Blog.css";
 
 const resolveImageUrl = (imagePath) => {
@@ -147,10 +149,10 @@ export default function Blog() {
 
     const title = form.title.trim();
     const subtitle = form.subtitle.trim();
-    const content = form.content.trim();
+    const content = form.content;
     const slug = form.slug.trim();
 
-    if (!title || !subtitle || !content) {
+    if (!title || !subtitle || isBlogContentEmpty(content)) {
       setModalError("Preencha título, subtítulo e conteúdo.");
       return;
     }
@@ -298,10 +300,10 @@ export default function Blog() {
 
     const title = editForm.title.trim();
     const subtitle = editForm.subtitle.trim();
-    const content = editForm.content.trim();
+    const content = editForm.content;
     const slug = editForm.slug.trim();
 
-    if (!title || !subtitle || !content) {
+    if (!title || !subtitle || isBlogContentEmpty(content)) {
       setEditError("Preencha título, subtítulo e conteúdo.");
       return;
     }
@@ -561,16 +563,13 @@ export default function Blog() {
                 </div>
               </div>
 
-              <div className="form-group">
-                <label htmlFor="blog-content">Conteúdo *</label>
-                <textarea
-                  id="blog-content"
-                  rows={10}
-                  value={form.content}
-                  onChange={(e) => setForm((prev) => ({ ...prev, content: e.target.value }))}
-                  disabled={savingAdd}
-                />
-              </div>
+              <BlogArticleEditor
+                key="blog-add-content"
+                id="blog-content"
+                value={form.content}
+                onChange={(content) => setForm((prev) => ({ ...prev, content }))}
+                disabled={savingAdd}
+              />
 
               <div className="blog-modal__checkbox">
                 <label>
@@ -685,16 +684,13 @@ export default function Blog() {
                 </div>
               </div>
 
-              <div className="form-group">
-                <label htmlFor="blog-edit-content">Conteúdo *</label>
-                <textarea
-                  id="blog-edit-content"
-                  rows={10}
-                  value={editForm.content}
-                  onChange={(e) => setEditForm((prev) => ({ ...prev, content: e.target.value }))}
-                  disabled={savingEdit}
-                />
-              </div>
+              <BlogArticleEditor
+                key={`blog-edit-content-${editingId ?? "none"}`}
+                id="blog-edit-content"
+                value={editForm.content}
+                onChange={(content) => setEditForm((prev) => ({ ...prev, content }))}
+                disabled={savingEdit}
+              />
 
               <div className="blog-modal__checkbox">
                 <label>

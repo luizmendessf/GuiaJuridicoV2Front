@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import api, { getBlogArticleByIdOrSlug } from "../services/apiService";
+import { isHtmlContent, prepareBlogContentForDisplay } from "../utils/blogContent";
 import "./BlogArticle.css";
 
 const resolveImageUrl = (imagePath) => {
@@ -61,6 +62,8 @@ export default function BlogArticle() {
   }
 
   const imageUrl = resolveImageUrl(article.imagePath);
+  const contentIsHtml = isHtmlContent(article.content);
+  const displayContent = prepareBlogContentForDisplay(article.content);
 
   return (
     <div className="blog-article-page">
@@ -82,9 +85,10 @@ export default function BlogArticle() {
             <p className="blog-article__subtitle">{article.subtitle}</p>
           </header>
 
-          <div className="blog-article__content">
-            {article.content}
-          </div>
+          <div
+            className={`blog-article__content ${contentIsHtml ? "blog-article__content--html" : "blog-article__content--plain"}`}
+            dangerouslySetInnerHTML={{ __html: displayContent }}
+          />
         </article>
       </div>
     </div>
