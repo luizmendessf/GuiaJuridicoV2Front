@@ -1,10 +1,12 @@
-import { useEffect, useCallback } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Link from "@tiptap/extension-link";
 import TextAlign from "@tiptap/extension-text-align";
 import Underline from "@tiptap/extension-underline";
+import Image from "@tiptap/extension-image";
 import { contentForEditor } from "../../utils/blogContent";
+import { resolveImageUrl, uploadImage } from "../../services/apiService";
 import "./BlogArticleEditor.css";
 
 function ToolbarButton({ onClick, active, disabled, title, children }) {
@@ -27,8 +29,12 @@ function ToolbarDivider() {
 }
 
 export default function BlogArticleEditor({ id, value, onChange, disabled = false, label = "Conteúdo *" }) {
-  const editor = useEditor({
-    extensions: [
+  const fileInputRef = useRef(null);
+  const insertImageRef = useRef(null);
+  const [uploadingImage, setUploadingImage] = useState(false);
+
+  const extensions = useMemo(
+    () => [
       StarterKit.configure({
         heading: { levels: [2, 3] },
       }),
@@ -41,9 +47,26 @@ export default function BlogArticleEditor({ id, value, onChange, disabled = fals
         protocols: ["http", "https", "mailto"],
       }),
       TextAlign.configure({
-        types: ["heading", "paragraph"],
+        types: ["heading", "paragraph", "image"],
+      }),
+      Image.configure({
+        HTMLAttributes: {
+          class: "blog-editor-image",
+        },
+        resize: {
+          enabled: true,
+          directions: ["bottom-right", "bottom-left", "top-right", "top-left"],
+          minWidth: 120,
+          minHeight: 80,
+          alwaysPreserveAspectRatio: true,
+        },
       }),
     ],
+    [],
+  );
+
+  const editor = useEditor({
+    extensions,
     content: contentForEditor(value),
     editable: !disabled,
     onUpdate: ({ editor: currentEditor }) => {
@@ -55,8 +78,54 @@ export default function BlogArticleEditor({ id, value, onChange, disabled = fals
         class: "blog-editor__content",
         "aria-label": label,
       },
+      handleDrop: (view, event) => {
+        const file = Array.from(event.dataTransfer?.files || []).find((item) =>
+          item.type.startsWith("image/"),
+        );
+        if (!file) return false;
+
+        event.preventDefault();
+        void insertImageRef.current?.(file);
+        return true;
+      },
+      handlePaste: (view, event) => {
+        const file = Array.from(event.clipboardData?.items || [])
+          .find((item) => item.type.startsWith("image/"))
+          ?.getAsFile();
+        if (!file) return false;
+
+        event.preventDefault();
+        void insertImageRef.current?.(file);
+        return true;
+      },
     },
   });
+
+  const insertImageFromFile = useCallback(
+    async (file) => {
+      if (!editor || !file || !file.type.startsWith("image/")) return;
+
+      setUploadingImage(true);
+      try {
+        const { data } = await uploadImage(file);
+        const src = resolveImageUrl(data?.url || data?.filename || data);
+        if (!src) {
+          window.alert("Não foi possível obter a URL da imagem enviada.");
+          return;
+        }
+
+        const alt = file.name.replace(/\.[^.]+$/, "").replace(/[-_]+/g, " ").trim();
+        editor.chain().focus().setImage({ src, alt: alt || "Imagem do artigo" }).run();
+      } catch {
+        window.alert("Não foi possível enviar a imagem. Tente novamente.");
+      } finally {
+        setUploadingImage(false);
+      }
+    },
+    [editor],
+  );
+
+  insertImageRef.current = insertImageFromFile;
 
   useEffect(() => {
     if (!editor) return;
@@ -93,6 +162,19 @@ export default function BlogArticleEditor({ id, value, onChange, disabled = fals
     editor.chain().focus().extendMarkRange("link").setLink({ href }).run();
   }, [editor]);
 
+  const handlePickImage = () => {
+    if (disabled || uploadingImage) return;
+    fileInputRef.current?.click();
+  };
+
+  const handleImageSelected = (event) => {
+    const file = event.target.files?.[0];
+    if (file) void insertImageFromFile(file);
+    event.target.value = "";
+  };
+
+  const imageSelected = editor?.isActive("image");
+
   if (!editor) {
     return (
       <div className="form-group">
@@ -105,6 +187,15 @@ export default function BlogArticleEditor({ id, value, onChange, disabled = fals
   return (
     <div className="form-group">
       <label htmlFor={id}>{label}</label>
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="image/*"
+        className="blog-editor__file-input"
+        onChange={handleImageSelected}
+        tabIndex={-1}
+        aria-hidden="true"
+      />
       <div className={`blog-editor ${disabled ? "is-disabled" : ""}`}>
         <div className="blog-editor__toolbar" role="toolbar" aria-label="Formatação do conteúdo">
           <ToolbarButton
@@ -189,6 +280,17 @@ export default function BlogArticleEditor({ id, value, onChange, disabled = fals
           <ToolbarDivider />
 
           <ToolbarButton
+            onClick={handlePickImage}
+            active={false}
+            disabled={disabled || uploadingImage}
+            title="Inserir imagem (ou arraste/cole no texto)"
+          >
+            {uploadingImage ? "..." : "Img"}
+          </ToolbarButton>
+
+          <ToolbarDivider />
+
+          <ToolbarButton
             onClick={() => editor.chain().focus().setTextAlign("left").run()}
             active={editor.isActive({ textAlign: "left" })}
             disabled={disabled}
@@ -215,7 +317,7 @@ export default function BlogArticleEditor({ id, value, onChange, disabled = fals
           <ToolbarButton
             onClick={() => editor.chain().focus().setTextAlign("justify").run()}
             active={editor.isActive({ textAlign: "justify" })}
-            disabled={disabled}
+            disabled={disabled || imageSelected}
             title="Justificar"
           >
             Just
@@ -259,6 +361,10 @@ export default function BlogArticleEditor({ id, value, onChange, disabled = fals
             ↷
           </ToolbarButton>
         </div>
+
+        <p className="blog-editor__hint">
+          Imagens: use o botão <strong>Img</strong>, ou arraste/cole no texto. Selecione a imagem para redimensionar (cantos) ou alinhar.
+        </p>
 
         <EditorContent editor={editor} />
       </div>

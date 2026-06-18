@@ -20,9 +20,10 @@ const ALLOWED_TAGS = [
   "blockquote",
   "span",
   "div",
+  "img",
 ];
 
-const ALLOWED_ATTR = ["href", "target", "rel", "style"];
+const ALLOWED_ATTR = ["href", "target", "rel", "style", "src", "alt", "title", "width", "height"];
 
 export function isHtmlContent(content) {
   if (!content) return false;

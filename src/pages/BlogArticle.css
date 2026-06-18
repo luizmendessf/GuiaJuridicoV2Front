@@ -145,6 +145,24 @@ html.dark .blog-article__subtitle {
   color: var(--color-primary-800);
 }
 
+.blog-article__content--html img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 0.5rem;
+  margin: 1rem 0;
+}
+
+.blog-article__content--html img[style*="text-align: center"] {
+  display: block;
+  margin-inline: auto;
+}
+
+.blog-article__content--html img[style*="text-align: right"] {
+  display: block;
+  margin-left: auto;
+  margin-right: 0;
+}
+
 html.dark .blog-article__content {
   color: var(--color-gray-200);
 }
