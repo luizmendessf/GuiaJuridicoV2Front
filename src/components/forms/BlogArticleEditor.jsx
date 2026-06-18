@@ -70,7 +70,7 @@ export default function BlogArticleEditor({ id, value, onChange, disabled = fals
     const currentHtml = editor.getHTML();
 
     if (normalizedValue === currentHtml) return;
-    if (editor.isFocused()) return;
+    if (editor.isFocused) return;
 
     editor.commands.setContent(normalizedValue, false);
   }, [editor, value]);
