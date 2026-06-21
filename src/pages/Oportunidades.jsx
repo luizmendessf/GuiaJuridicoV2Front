@@ -1,9 +1,10 @@
 // src/pages/Oportunidades.jsx
 import { useState, useEffect } from "react";
-import { ImageOff, Search, Plus } from "lucide-react";
+import { Search, Plus } from "lucide-react";
 import OpportunityCard from "../components/cards/OpportunityCard";
-import OpportunityForm from "../components/forms/OpportunityForm";
 import Button from "../components/ui/button";
+import CalendarFilter from "../components/filters/CalendarFilter";
+import { opportunityMatchesDateRange } from "../utils/dateUtils";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import api, { getAllOportunidades, createOportunidade, updateOportunidade, deleteOportunidade } from "../services/apiService";
@@ -35,6 +36,8 @@ export default function Oportunidades() {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("Todos");
   const [selectedStatus, setSelectedStatus] = useState("Abertas");
+  const [dateFrom, setDateFrom] = useState("");
+  const [dateTo, setDateTo] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [showForm, setShowForm] = useState(false);
@@ -165,8 +168,15 @@ export default function Oportunidades() {
     // Se "Todas" estiver selecionado, o filtro de status é ignorado (sempre verdadeiro)
     const matchesStatus = selectedStatus === 'Todas' || opportunityStatus === selectedStatusNorm;
 
-    return matchesSearch && matchesCategory && matchesStatus;
+    const matchesDate = opportunityMatchesDateRange(opportunity, dateFrom, dateTo);
+
+    return matchesSearch && matchesCategory && matchesStatus && matchesDate;
   });
+
+  const handleDateChange = (from, to) => {
+    setDateFrom(from);
+    setDateTo(to);
+  };
 
   return (
     <div className="opportunities-page">
@@ -205,16 +215,24 @@ export default function Oportunidades() {
           </div>
 
           <div className="status-bar">
-            {statusFilters.map((status) => (
-              <Button
-                key={status}
-                variant={selectedStatus === status ? "primary" : "outline"}
-                onClick={() => setSelectedStatus(status)}
-                className="status-button"
-              >
-                {status}
-              </Button>
-            ))}
+            <div className="status-bar__filters">
+              {statusFilters.map((status) => (
+                <Button
+                  key={status}
+                  variant={selectedStatus === status ? "primary" : "outline"}
+                  onClick={() => setSelectedStatus(status)}
+                  className="status-button"
+                >
+                  {status}
+                </Button>
+              ))}
+            </div>
+            <CalendarFilter
+              opportunities={opportunities}
+              dateFrom={dateFrom}
+              dateTo={dateTo}
+              onDateChange={handleDateChange}
+            />
           </div>
 
           <div className="categories-bar">
