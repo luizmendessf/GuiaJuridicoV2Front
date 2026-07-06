@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
+import { Search } from "lucide-react";
 import BlogArticleCard from "../components/cards/BlogArticleCard";
+import Button from "../components/ui/button";
 import api, {
   createBlogArticle,
   deleteBlogArticle,
@@ -12,7 +14,15 @@ import api, {
 import { useAuth } from "../context/AuthContext";
 import BlogArticleEditor from "../components/forms/BlogArticleEditor";
 import { isBlogContentEmpty } from "../utils/blogContent";
+import {
+  BLOG_CATEGORIES,
+  BLOG_FILTER_ALL,
+  getBlogSubcategories,
+  hasBlogSubcategories,
+} from "../utils/blogCategories";
 import "./Blog.css";
+
+const blogFilterCategories = [BLOG_FILTER_ALL, ...BLOG_CATEGORIES];
 
 const resolveImageUrl = (imagePath) => {
   if (!imagePath) return null;
@@ -28,6 +38,9 @@ export default function Blog() {
 
   const [mode, setMode] = useState("public");
   const [manageFilter, setManageFilter] = useState("drafts");
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState(BLOG_FILTER_ALL);
+  const [selectedSubcategory, setSelectedSubcategory] = useState(BLOG_FILTER_ALL);
 
   const [publicArticles, setPublicArticles] = useState([]);
   const [publicStatus, setPublicStatus] = useState("loading");
@@ -48,6 +61,8 @@ export default function Blog() {
     slug: "",
     content: "",
     published: false,
+    category: "",
+    subcategory: "",
   });
 
   const resetAddForm = () => {
@@ -57,6 +72,8 @@ export default function Blog() {
       slug: "",
       content: "",
       published: false,
+      category: "",
+      subcategory: "",
     });
     setImageFile(null);
     setPreviewUrl(null);
@@ -157,6 +174,16 @@ export default function Blog() {
       return;
     }
 
+    if (!form.category) {
+      setModalError("Selecione uma categoria.");
+      return;
+    }
+
+    if (hasBlogSubcategories(form.category) && !form.subcategory) {
+      setModalError("Selecione um subfiltro.");
+      return;
+    }
+
     setSavingAdd(true);
     try {
       let imagePath;
@@ -178,6 +205,8 @@ export default function Blog() {
         published: !!form.published,
         slug: slug ? slug : undefined,
         imagePath: imagePath ? imagePath : undefined,
+        category: form.category,
+        subcategory: form.subcategory || undefined,
       };
 
       const { data } = await createBlogArticle(payload);
@@ -222,6 +251,8 @@ export default function Blog() {
     content: "",
     published: false,
     imagePath: "",
+    category: "",
+    subcategory: "",
   });
 
   useEffect(() => {
@@ -255,6 +286,8 @@ export default function Blog() {
         content: data?.content || "",
         published: !!data?.published,
         imagePath: data?.imagePath || "",
+        category: data?.category || "",
+        subcategory: data?.subcategory || "",
       });
     } catch {
       setEditError("Não foi possível carregar o artigo para edição.");
@@ -308,6 +341,16 @@ export default function Blog() {
       return;
     }
 
+    if (!editForm.category) {
+      setEditError("Selecione uma categoria.");
+      return;
+    }
+
+    if (hasBlogSubcategories(editForm.category) && !editForm.subcategory) {
+      setEditError("Selecione um subfiltro.");
+      return;
+    }
+
     setSavingEdit(true);
     try {
       let imagePath = editForm.imagePath?.trim() || "";
@@ -323,6 +366,8 @@ export default function Blog() {
         published: !!editForm.published,
         slug: slug ? slug : undefined,
         imagePath: imagePath ? imagePath : undefined,
+        category: editForm.category,
+        subcategory: editForm.subcategory || undefined,
       };
 
       await updateBlogArticle(editingId, payload);
@@ -365,14 +410,54 @@ export default function Blog() {
 
   const visibleArticles = mode === "manage" ? adminArticles : publicArticles;
   const visibleStatus = mode === "manage" ? adminStatus : publicStatus;
-  const filteredArticles =
-    mode !== "manage"
-      ? visibleArticles
-      : visibleArticles.filter((a) => {
-          if (manageFilter === "drafts") return a.published === false;
-          if (manageFilter === "published") return a.published === true;
-          return true;
-        });
+
+  const activeSubcategories =
+    selectedCategory !== BLOG_FILTER_ALL && hasBlogSubcategories(selectedCategory)
+      ? [BLOG_FILTER_ALL, ...getBlogSubcategories(selectedCategory)]
+      : [];
+
+  const handleCategoryChange = (category) => {
+    setSelectedCategory(category);
+    setSelectedSubcategory(BLOG_FILTER_ALL);
+  };
+
+  const filteredArticles = (() => {
+    let articles = visibleArticles;
+
+    if (mode === "manage") {
+      articles = articles.filter((a) => {
+        if (manageFilter === "drafts") return a.published === false;
+        if (manageFilter === "published") return a.published === true;
+        return true;
+      });
+    } else {
+      const lowerSearchTerm = (searchTerm || "").toLowerCase();
+
+      articles = articles.filter((article) => {
+        const title = typeof article.title === "string" ? article.title.toLowerCase() : "";
+        const subtitle = typeof article.subtitle === "string" ? article.subtitle.toLowerCase() : "";
+        const matchesSearch = title.includes(lowerSearchTerm) || subtitle.includes(lowerSearchTerm);
+
+        const articleCategory =
+          typeof article.category === "string" ? article.category.toLowerCase() : "";
+        const selectedCategoryNorm = (selectedCategory || "").toLowerCase();
+        const matchesCategory =
+          selectedCategory === BLOG_FILTER_ALL || articleCategory === selectedCategoryNorm;
+
+        const articleSubcategory =
+          typeof article.subcategory === "string" ? article.subcategory.toLowerCase() : "";
+        const selectedSubcategoryNorm = (selectedSubcategory || "").toLowerCase();
+        const matchesSubcategory =
+          selectedSubcategory === BLOG_FILTER_ALL ||
+          !hasBlogSubcategories(selectedCategory) ||
+          articleSubcategory === selectedSubcategoryNorm;
+
+        return matchesSearch && matchesCategory && matchesSubcategory;
+      });
+    }
+
+    return articles;
+  })();
 
   return (
     <div className="blog-page">
@@ -437,6 +522,58 @@ export default function Blog() {
           </div>
         )}
 
+        {mode === "public" && (
+          <div className="filters-section">
+            <div className="search-bar">
+              <Search className="search-bar__icon" />
+              <input
+                type="text"
+                placeholder="Buscar por título ou subtítulo..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="search-bar__input"
+              />
+            </div>
+
+            <div className="categories-bar">
+              {blogFilterCategories.map((category) => (
+                <Button
+                  key={category}
+                  variant={selectedCategory === category ? "primary" : "outline"}
+                  onClick={() => handleCategoryChange(category)}
+                  className="category-button"
+                >
+                  {category}
+                </Button>
+              ))}
+            </div>
+
+            {activeSubcategories.length > 0 && (
+              <div className="subcategories-bar">
+                {activeSubcategories.map((subcategory) => (
+                  <Button
+                    key={subcategory}
+                    variant={selectedSubcategory === subcategory ? "primary" : "outline"}
+                    onClick={() => setSelectedSubcategory(subcategory)}
+                    className="subcategory-button"
+                  >
+                    {subcategory}
+                  </Button>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+
+        {mode === "public" && visibleStatus === "ready" && (
+          <div className="results-count">
+            <p>
+              {filteredArticles.length} artigo{filteredArticles.length !== 1 && "s"} encontrado
+              {filteredArticles.length !== 1 && "s"}
+            </p>
+          </div>
+        )}
+
         {visibleStatus === "loading" && (
           <div className="blog-state">Carregando artigos...</div>
         )}
@@ -447,7 +584,9 @@ export default function Blog() {
 
         {visibleStatus === "ready" && filteredArticles.length === 0 && (
           <div className="blog-state">
-            {mode === "manage" ? "Nenhum artigo encontrado para este filtro." : "Nenhum artigo publicado ainda."}
+            {mode === "manage"
+              ? "Nenhum artigo encontrado para este filtro."
+              : "Nenhum artigo encontrado com os filtros selecionados."}
           </div>
         )}
 
@@ -521,6 +660,50 @@ export default function Blog() {
                     disabled={savingAdd}
                   />
                 </div>
+
+                <div className="form-group">
+                  <label htmlFor="blog-category">Categoria *</label>
+                  <select
+                    id="blog-category"
+                    value={form.category}
+                    onChange={(e) =>
+                      setForm((prev) => ({
+                        ...prev,
+                        category: e.target.value,
+                        subcategory: "",
+                      }))
+                    }
+                    disabled={savingAdd}
+                  >
+                    <option value="">Selecione uma categoria</option>
+                    {BLOG_CATEGORIES.map((category) => (
+                      <option key={category} value={category}>
+                        {category}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                {hasBlogSubcategories(form.category) && (
+                  <div className="form-group">
+                    <label htmlFor="blog-subcategory">Subfiltro *</label>
+                    <select
+                      id="blog-subcategory"
+                      value={form.subcategory}
+                      onChange={(e) =>
+                        setForm((prev) => ({ ...prev, subcategory: e.target.value }))
+                      }
+                      disabled={savingAdd}
+                    >
+                      <option value="">Selecione um subfiltro</option>
+                      {getBlogSubcategories(form.category).map((subcategory) => (
+                        <option key={subcategory} value={subcategory}>
+                          {subcategory}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                )}
               </div>
 
               <div className="blog-modal-form__preview">
@@ -648,6 +831,50 @@ export default function Blog() {
                     disabled={savingEdit}
                   />
                 </div>
+
+                <div className="form-group">
+                  <label htmlFor="blog-edit-category">Categoria *</label>
+                  <select
+                    id="blog-edit-category"
+                    value={editForm.category}
+                    onChange={(e) =>
+                      setEditForm((prev) => ({
+                        ...prev,
+                        category: e.target.value,
+                        subcategory: "",
+                      }))
+                    }
+                    disabled={savingEdit}
+                  >
+                    <option value="">Selecione uma categoria</option>
+                    {BLOG_CATEGORIES.map((category) => (
+                      <option key={category} value={category}>
+                        {category}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                {hasBlogSubcategories(editForm.category) && (
+                  <div className="form-group">
+                    <label htmlFor="blog-edit-subcategory">Subfiltro *</label>
+                    <select
+                      id="blog-edit-subcategory"
+                      value={editForm.subcategory}
+                      onChange={(e) =>
+                        setEditForm((prev) => ({ ...prev, subcategory: e.target.value }))
+                      }
+                      disabled={savingEdit}
+                    >
+                      <option value="">Selecione um subfiltro</option>
+                      {getBlogSubcategories(editForm.category).map((subcategory) => (
+                        <option key={subcategory} value={subcategory}>
+                          {subcategory}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                )}
               </div>
 
               <div className="blog-modal-form__preview">
