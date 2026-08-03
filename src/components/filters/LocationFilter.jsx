@@ -2,16 +2,13 @@ import { useState, useRef, useEffect, useLayoutEffect, useMemo } from "react";
 import { createPortal } from "react-dom";
 import { MapPin, ChevronDown, X } from "lucide-react";
 import Button from "../ui/button";
-import {
-  LOCATION_FILTER_ALL,
-  collectLocationFilterOptions,
-} from "../../utils/locationUtils";
+import { collectLocationFilterOptions } from "../../utils/locationUtils";
 import "./LocationFilter.css";
 
 export default function LocationFilter({
   opportunities,
-  selectedLocation,
-  onLocationChange,
+  selectedLocations = [],
+  onLocationsChange,
 }) {
   const [isOpen, setIsOpen] = useState(false);
   const [popupStyle, setPopupStyle] = useState({});
@@ -24,7 +21,8 @@ export default function LocationFilter({
     [opportunities]
   );
 
-  const hasActiveFilter = selectedLocation && selectedLocation !== LOCATION_FILTER_ALL;
+  const selected = Array.isArray(selectedLocations) ? selectedLocations : [];
+  const hasActiveFilter = selected.length > 0;
 
   const updatePopupPosition = () => {
     if (!triggerRef.current) return;
@@ -71,17 +69,24 @@ export default function LocationFilter({
     };
   }, [isOpen]);
 
-  const handleSelect = (value) => {
-    onLocationChange(value);
-    setIsOpen(false);
+  const handleToggle = (value) => {
+    if (selected.includes(value)) {
+      onLocationsChange(selected.filter((item) => item !== value));
+      return;
+    }
+    onLocationsChange([...selected, value]);
   };
 
   const handleClear = (e) => {
     e.stopPropagation();
-    onLocationChange(LOCATION_FILTER_ALL);
+    onLocationsChange([]);
   };
 
-  const triggerLabel = hasActiveFilter ? selectedLocation : "Localização";
+  const triggerLabel = (() => {
+    if (!hasActiveFilter) return "Localização";
+    if (selected.length === 1) return selected[0];
+    return `${selected.length} locais`;
+  })();
 
   return (
     <div className="location-filter" ref={containerRef}>
@@ -119,11 +124,13 @@ export default function LocationFilter({
             className="location-filter__popup"
             style={popupStyle}
             role="listbox"
+            aria-multiselectable="true"
             aria-label="Filtrar por localização"
           >
+            <p className="location-filter__hint">Selecione uma ou mais opções</p>
             <ul className="location-filter__list">
               {options.map((option) => {
-                const isSelected = option === selectedLocation;
+                const isSelected = selected.includes(option);
                 return (
                   <li key={option}>
                     <button
@@ -136,8 +143,17 @@ export default function LocationFilter({
                       ]
                         .filter(Boolean)
                         .join(" ")}
-                      onClick={() => handleSelect(option)}
+                      onClick={() => handleToggle(option)}
                     >
+                      <span
+                        className={[
+                          "location-filter__checkbox",
+                          isSelected && "location-filter__checkbox--checked",
+                        ]
+                          .filter(Boolean)
+                          .join(" ")}
+                        aria-hidden="true"
+                      />
                       {option}
                     </button>
                   </li>

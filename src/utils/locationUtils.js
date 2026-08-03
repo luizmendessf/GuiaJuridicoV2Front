@@ -180,11 +180,12 @@ export function formatLocation({ modality, cityKey }) {
 }
 
 /**
- * Dynamic filter options from loaded opportunities.
+ * Dynamic filter options from loaded opportunities (multi-select values).
  * Only cities from non-remote opportunities; Remoto if any remote exists.
+ * Does not include "Todas" — empty selection means all.
  */
 export function collectLocationFilterOptions(opportunities) {
-  const options = [LOCATION_FILTER_ALL];
+  const options = [];
   const cities = new Set();
   let hasRemote = false;
 
@@ -210,9 +211,16 @@ export function collectLocationFilterOptions(opportunities) {
   return options;
 }
 
-export function opportunityMatchesLocation(opportunity, selected) {
-  if (!selected || selected === LOCATION_FILTER_ALL) return true;
+function normalizeSelectedLocations(selected) {
+  if (!selected) return [];
+  if (Array.isArray(selected)) {
+    return selected.filter((value) => value && value !== LOCATION_FILTER_ALL);
+  }
+  if (selected === LOCATION_FILTER_ALL) return [];
+  return [selected];
+}
 
+function opportunityMatchesSingleLocation(opportunity, selected) {
   const parsed = parseLocation(opportunity?.location);
 
   if (selected === LOCATION_FILTER_REMOTE) {
@@ -221,6 +229,19 @@ export function opportunityMatchesLocation(opportunity, selected) {
 
   if (parsed.kind === 'remoto') return false;
   return parsed.cityKey === selected;
+}
+
+/**
+ * Match when no selection (all) or when the opportunity matches any selected location (OR).
+ * @param {object} opportunity
+ * @param {string|string[]} selected
+ */
+export function opportunityMatchesLocation(opportunity, selected) {
+  const selectedLocations = normalizeSelectedLocations(selected);
+  if (!selectedLocations.length) return true;
+  return selectedLocations.some((value) =>
+    opportunityMatchesSingleLocation(opportunity, value)
+  );
 }
 
 /**
