@@ -6,12 +6,42 @@ import './OpportunityForm.css';
 import { uploadImage } from '../../services/apiService';
 import { opportunityPresetKeySet } from '../../utils/opportunityImageMap';
 import { logicalImageKeyForForm, imageFilenameFromUploadResponse } from '../../utils/resolveOpportunityImageSrc';
+import {
+  CITY_CATALOG,
+  LOCATION_MODALITIES,
+  OTHER_CITY_VALUE,
+  formatLocation,
+  parseLocation,
+} from '../../utils/locationUtils';
+
+const emptyLocationFields = {
+  locationModality: 'Presencial',
+  locationCitySelect: '',
+  locationCityOther: '',
+};
+
+const locationFieldsFromRaw = (raw) => {
+  const parsed = parseLocation(raw);
+  if (parsed.modality === 'Remoto' || parsed.kind === 'remoto') {
+    return {
+      locationModality: 'Remoto',
+      locationCitySelect: '',
+      locationCityOther: '',
+    };
+  }
+  const cityKey = parsed.cityKey || '';
+  const inCatalog = CITY_CATALOG.includes(cityKey);
+  return {
+    locationModality: parsed.modality === 'Híbrido' ? 'Híbrido' : 'Presencial',
+    locationCitySelect: inCatalog ? cityKey : cityKey ? OTHER_CITY_VALUE : '',
+    locationCityOther: inCatalog ? '' : cityKey,
+  };
+};
 
 const OpportunityForm = ({ opportunity = null, onSave, onCancel, isOpen }) => {
   const [formData, setFormData] = useState({
     title: '',
     company: '',
-    location: '',
     description: '',
     requirements: '',
     salary: '',
@@ -19,7 +49,8 @@ const OpportunityForm = ({ opportunity = null, onSave, onCancel, isOpen }) => {
     type: 'Estágio',
     image: 'estagio.jpg',
     openingDate: '',
-    closingDate: ''
+    closingDate: '',
+    ...emptyLocationFields,
   });
   
   const [loading, setLoading] = useState(false);
@@ -50,7 +81,6 @@ const OpportunityForm = ({ opportunity = null, onSave, onCancel, isOpen }) => {
       setFormData({
         title: opportunity.title || '',
         company: opportunity.company || '',
-        location: opportunity.location || '',
         description: opportunity.description || '',
         requirements: (() => {
           if (!opportunity.requirements) return '';
@@ -71,7 +101,8 @@ const OpportunityForm = ({ opportunity = null, onSave, onCancel, isOpen }) => {
         type: opportunity.type || 'Estágio',
         image: logicalImageKeyForForm(opportunity.image, opportunityPresetKeySet),
         openingDate: opportunity.openingDate || '',
-        closingDate: opportunity.closingDate || ''
+        closingDate: opportunity.closingDate || '',
+        ...locationFieldsFromRaw(opportunity.location),
       });
     }
   }, [opportunity]);
@@ -89,26 +120,65 @@ const OpportunityForm = ({ opportunity = null, onSave, onCancel, isOpen }) => {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
+    setFormData(prev => {
+      const next = {
+        ...prev,
+        [name]: value,
+      };
+      if (name === 'locationModality' && value === 'Remoto') {
+        next.locationCitySelect = '';
+        next.locationCityOther = '';
+      }
+      return next;
+    });
     
     // Clear error when user starts typing
-    if (errors[name]) {
+    const clearsLocationError = [
+      'locationModality',
+      'locationCitySelect',
+      'locationCityOther',
+    ].includes(name);
+    if (errors[name] || (clearsLocationError && errors.location)) {
       setErrors(prev => ({
         ...prev,
-        [name]: ''
+        [name]: '',
+        ...(clearsLocationError ? { location: '' } : {}),
       }));
     }
   };
+
+  const resolveCityKey = () => {
+    if (formData.locationModality === 'Remoto') return null;
+    if (formData.locationCitySelect === OTHER_CITY_VALUE) {
+      return formData.locationCityOther.trim();
+    }
+    return formData.locationCitySelect.trim();
+  };
+
+  const buildLocationString = () =>
+    formatLocation({
+      modality: formData.locationModality,
+      cityKey: resolveCityKey(),
+    });
 
   const validateForm = () => {
     const newErrors = {};
     
     if (!formData.title.trim()) newErrors.title = 'Título é obrigatório';
     if (!formData.company.trim()) newErrors.company = 'Empresa é obrigatória';
-    if (!formData.location.trim()) newErrors.location = 'Localização é obrigatória';
+    if (!formData.locationModality) {
+      newErrors.location = 'Modalidade é obrigatória';
+    } else if (formData.locationModality !== 'Remoto') {
+      const cityKey = resolveCityKey();
+      if (!cityKey) {
+        newErrors.location = 'Cidade é obrigatória';
+      } else if (
+        formData.locationCitySelect === OTHER_CITY_VALUE &&
+        !formData.locationCityOther.trim()
+      ) {
+        newErrors.location = 'Informe a cidade';
+      }
+    }
     if (!formData.description.trim()) newErrors.description = 'Descrição é obrigatória';
     if (!formData.type) newErrors.type = 'Tipo é obrigatório';
     
@@ -131,8 +201,15 @@ const OpportunityForm = ({ opportunity = null, onSave, onCancel, isOpen }) => {
     setLoading(true);
     
     try {
+      const {
+        locationModality,
+        locationCitySelect,
+        locationCityOther,
+        ...rest
+      } = formData;
       const submitData = {
-        ...formData,
+        ...rest,
+        location: buildLocationString(),
         requirements: formData.requirements 
           ? JSON.stringify(formData.requirements.split('\n').filter(req => req.trim()))
           : JSON.stringify([])
@@ -227,21 +304,72 @@ const OpportunityForm = ({ opportunity = null, onSave, onCancel, isOpen }) => {
               {errors.company && <span className="error-message">{errors.company}</span>}
             </div>
 
-            <div className="form-group">
-              <label htmlFor="location">
+            <div className="form-group full-width location-fields">
+              <label>
                 <MapPin size={16} />
                 Localização *
               </label>
-              <input
-                type="text"
-                id="location"
-                name="location"
-                value={formData.location}
-                onChange={handleInputChange}
-                className={errors.location ? 'error' : ''}
-                placeholder="Ex: São Paulo, SP"
-                disabled={loading}
-              />
+              <div className="location-fields__row">
+                <div className="location-fields__modality">
+                  <span className="location-fields__sublabel">Modalidade</span>
+                  <select
+                    id="locationModality"
+                    name="locationModality"
+                    value={formData.locationModality}
+                    onChange={handleInputChange}
+                    className={errors.location ? 'error' : ''}
+                    disabled={loading}
+                    aria-label="Modalidade da localização"
+                  >
+                    {LOCATION_MODALITIES.map((modality) => (
+                      <option key={modality} value={modality}>{modality}</option>
+                    ))}
+                  </select>
+                </div>
+                <div className="location-fields__city">
+                  <span className="location-fields__sublabel">Cidade</span>
+                  <select
+                    id="locationCitySelect"
+                    name="locationCitySelect"
+                    value={
+                      formData.locationModality === 'Remoto'
+                        ? ''
+                        : formData.locationCitySelect
+                    }
+                    onChange={handleInputChange}
+                    className={errors.location ? 'error' : ''}
+                    disabled={loading || formData.locationModality === 'Remoto'}
+                    aria-label="Cidade da localização"
+                  >
+                    <option value="">
+                      {formData.locationModality === 'Remoto'
+                        ? 'Não se aplica (remoto)'
+                        : 'Selecione a cidade'}
+                    </option>
+                    {CITY_CATALOG.map((city) => (
+                      <option key={city} value={city}>{city}</option>
+                    ))}
+                    <option value={OTHER_CITY_VALUE}>Outra…</option>
+                  </select>
+                  {formData.locationModality !== 'Remoto' &&
+                    formData.locationCitySelect === OTHER_CITY_VALUE && (
+                      <input
+                        type="text"
+                        id="locationCityOther"
+                        name="locationCityOther"
+                        value={formData.locationCityOther}
+                        onChange={handleInputChange}
+                        className={errors.location ? 'error' : ''}
+                        placeholder="Ex: Curitiba, PR"
+                        disabled={loading}
+                        style={{ marginTop: '0.5rem' }}
+                      />
+                    )}
+                </div>
+              </div>
+              <p className="location-fields__preview">
+                Será salvo como: <strong>{buildLocationString() || '—'}</strong>
+              </p>
               {errors.location && <span className="error-message">{errors.location}</span>}
             </div>
 

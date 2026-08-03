@@ -137,8 +137,21 @@
   .status-bar__filters::-webkit-scrollbar {
     display: none;
   }
+
+  .status-bar__separator {
+    flex-shrink: 0;
+    width: 1px;
+    height: 1.75rem;
+    margin: 0 0.35rem;
+    background-color: var(--color-gray-200);
+  }
+
   html.dark .status-bar {
     border-color: var(--color-gray-800);
+  }
+
+  html.dark .status-bar__separator {
+    background-color: var(--color-gray-700);
   }
 
   .status-button,
