@@ -6,10 +6,7 @@ import Button from "../components/ui/button";
 import CalendarFilter from "../components/filters/CalendarFilter";
 import LocationFilter from "../components/filters/LocationFilter";
 import { opportunityMatchesDateRange } from "../utils/dateUtils";
-import {
-  LOCATION_FILTER_ALL,
-  opportunityMatchesLocation,
-} from "../utils/locationUtils";
+import { opportunityMatchesLocation } from "../utils/locationUtils";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import api, { getAllOportunidades, createOportunidade, updateOportunidade, deleteOportunidade } from "../services/apiService";
@@ -43,7 +40,7 @@ export default function Oportunidades() {
   const [selectedStatus, setSelectedStatus] = useState("Abertas");
   const [dateFrom, setDateFrom] = useState("");
   const [dateTo, setDateTo] = useState("");
-  const [selectedLocation, setSelectedLocation] = useState(LOCATION_FILTER_ALL);
+  const [selectedLocations, setSelectedLocations] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [showForm, setShowForm] = useState(false);
@@ -175,7 +172,7 @@ export default function Oportunidades() {
     const matchesStatus = selectedStatus === 'Todas' || opportunityStatus === selectedStatusNorm;
 
     const matchesDate = opportunityMatchesDateRange(opportunity, dateFrom, dateTo);
-    const matchesLocation = opportunityMatchesLocation(opportunity, selectedLocation);
+    const matchesLocation = opportunityMatchesLocation(opportunity, selectedLocations);
 
     return matchesSearch && matchesCategory && matchesStatus && matchesDate && matchesLocation;
   });
@@ -236,8 +233,8 @@ export default function Oportunidades() {
               <div className="status-bar__separator" aria-hidden="true" />
               <LocationFilter
                 opportunities={opportunities}
-                selectedLocation={selectedLocation}
-                onLocationChange={setSelectedLocation}
+                selectedLocations={selectedLocations}
+                onLocationsChange={setSelectedLocations}
               />
             </div>
             <CalendarFilter
