@@ -47,9 +47,10 @@ export default function Oportunidades() {
   const [editingOpportunity, setEditingOpportunity] = useState(null);
   const [formLoading, setFormLoading] = useState(false);
   
-  const { hasAdminOrOrganizerRole } = useAuth();
+  const { isAuthenticated, hasAdminOrOrganizerRole } = useAuth();
   const navigate = useNavigate();
-  const canManageOpportunities = hasAdminOrOrganizerRole();
+  const canCreateOrEditOpportunities = isAuthenticated;
+  const canDeleteOpportunities = hasAdminOrOrganizerRole();
 
   const fetchOpportunities = async () => {
     try {
@@ -193,7 +194,7 @@ export default function Oportunidades() {
                 Descubra as melhores vagas de estágio, trainee, olimpíadas e concursos
               </p>
             </div>
-            {canManageOpportunities && (
+            {canCreateOrEditOpportunities && (
               <Button 
                 variant="primary" 
                 onClick={handleCreateOpportunity}
@@ -283,8 +284,8 @@ export default function Oportunidades() {
                 <OpportunityCard 
                   key={opportunity.id} 
                   opportunity={opportunity}
-                  onEdit={canManageOpportunities ? handleEditOpportunity : undefined}
-                  onDelete={canManageOpportunities ? handleDeleteOpportunity : undefined}
+                  onEdit={canCreateOrEditOpportunities ? handleEditOpportunity : undefined}
+                  onDelete={canDeleteOpportunities ? handleDeleteOpportunity : undefined}
                 />
               ))
             ) : (
