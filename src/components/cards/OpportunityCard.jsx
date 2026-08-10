@@ -23,12 +23,13 @@ export default function OpportunityCard({ opportunity, onEdit, onDelete }) {
   } = opportunity;
 
   const { isFavorite, toggleFavorite } = useFavorites();
-  const { hasAdminOrOrganizerRole } = useAuth();
+  const { isAuthenticated, hasAdminOrOrganizerRole } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   
   const isSaved = isFavorite(id);
-  const canEdit = hasAdminOrOrganizerRole();
+  const canEdit = isAuthenticated && typeof onEdit === 'function';
+  const canDelete = hasAdminOrOrganizerRole() && typeof onDelete === 'function';
 
   const getStatusText = (status) => {
     if (status === 'Abertas') return 'Inscrições Abertas';
@@ -89,25 +90,25 @@ export default function OpportunityCard({ opportunity, onEdit, onDelete }) {
               <Heart size={20} fill={isSaved ? 'currentColor' : 'none'} />
             </button>
             {canEdit && (
-              <>
-                <button 
-                  className="edit-button"
-                  onClick={handleEdit}
-                  aria-label="Editar oportunidade"
-                  title="Editar oportunidade"
-                >
-                  <Edit size={18} />
-                </button>
-                <button 
-                  className="delete-button"
-                  onClick={handleDelete}
-                  disabled={isDeleting}
-                  aria-label="Excluir oportunidade"
-                  title="Excluir oportunidade"
-                >
-                  <Trash2 size={18} />
-                </button>
-              </>
+              <button 
+                className="edit-button"
+                onClick={handleEdit}
+                aria-label="Editar oportunidade"
+                title="Editar oportunidade"
+              >
+                <Edit size={18} />
+              </button>
+            )}
+            {canDelete && (
+              <button 
+                className="delete-button"
+                onClick={handleDelete}
+                disabled={isDeleting}
+                aria-label="Excluir oportunidade"
+                title="Excluir oportunidade"
+              >
+                <Trash2 size={18} />
+              </button>
             )}
           </div>
         </div>
