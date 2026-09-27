@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import api from "../../services/apiService";
+import { formatBlogDate, resolveBlogPublicationDate } from "../../utils/blogDateUtils";
 import "./BlogArticleCard.css";
 
 const resolveImageUrl = (imagePath) => {
@@ -15,6 +16,8 @@ export default function BlogArticleCard({ article, onClick, showStatus = false, 
 
   const to = `/blog/${slug || id}`;
   const imageUrl = resolveImageUrl(imagePath);
+  const publicationDate = resolveBlogPublicationDate(article);
+  const formattedDate = formatBlogDate(publicationDate);
 
   const Wrapper = onClick ? "button" : Link;
   const wrapperProps = onClick
@@ -40,6 +43,9 @@ export default function BlogArticleCard({ article, onClick, showStatus = false, 
           )}
           <h3 className="blog-article-card__title">{title}</h3>
           <p className="blog-article-card__subtitle">{subtitle}</p>
+          {formattedDate && (
+            <p className="blog-article-card__date">Publicado em {formattedDate}</p>
+          )}
           {actions && <div className="blog-article-card__actions">{actions}</div>}
         </div>
       </div>

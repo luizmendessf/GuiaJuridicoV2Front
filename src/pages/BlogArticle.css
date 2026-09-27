@@ -80,8 +80,19 @@ html.dark .blog-article__image-wrapper {
   text-align: center;
 }
 
+.blog-article__date {
+  margin-top: 0.75rem;
+  color: var(--color-gray-500);
+  font-size: 0.95rem;
+  text-align: center;
+}
+
 html.dark .blog-article__subtitle {
   color: var(--color-gray-300);
+}
+
+html.dark .blog-article__date {
+  color: var(--color-gray-400);
 }
 
 .blog-article__content {

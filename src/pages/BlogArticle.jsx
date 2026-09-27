@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import api, { getBlogArticleByIdOrSlug } from "../services/apiService";
 import { isHtmlContent, prepareBlogContentForDisplay } from "../utils/blogContent";
+import { formatBlogDate, resolveBlogPublicationDate } from "../utils/blogDateUtils";
 import "./BlogArticle.css";
 
 const resolveImageUrl = (imagePath) => {
@@ -64,6 +65,7 @@ export default function BlogArticle() {
   const imageUrl = resolveImageUrl(article.imagePath);
   const contentIsHtml = isHtmlContent(article.content);
   const displayContent = prepareBlogContentForDisplay(article.content);
+  const formattedDate = formatBlogDate(resolveBlogPublicationDate(article));
 
   return (
     <div className="blog-article-page">
@@ -83,6 +85,9 @@ export default function BlogArticle() {
           <header className="blog-article__header">
             <h1 className="blog-article__title">{article.title}</h1>
             <p className="blog-article__subtitle">{article.subtitle}</p>
+            {formattedDate && (
+              <p className="blog-article__date">Publicado em {formattedDate}</p>
+            )}
           </header>
 
           <div
