@@ -107,6 +107,13 @@ html.dark .blog-article-card__badge.is-draft {
   text-align: center;
 }
 
+.blog-article-card__date {
+  margin-top: 0.65rem;
+  color: var(--color-gray-500);
+  font-size: 0.875rem;
+  text-align: center;
+}
+
 .blog-article-card__actions {
   margin-top: 0.9rem;
   display: flex;
@@ -147,4 +154,8 @@ html.dark .blog-article-card {
 
 html.dark .blog-article-card__subtitle {
   color: var(--color-gray-300);
+}
+
+html.dark .blog-article-card__date {
+  color: var(--color-gray-400);
 }
