@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { Construction } from "lucide-react";
+import { Construction, Search } from "lucide-react";
 import LibraryDocumentCard from "../components/cards/LibraryDocumentCard";
 import {
   createLibraryDocument,
@@ -15,6 +15,11 @@ import {
   uploadLibraryPdf,
 } from "../services/apiService";
 import { useAuth } from "../context/AuthContext";
+import {
+  DEFAULT_LIBRARY_DOCUMENT_TYPE,
+  LIBRARY_DOCUMENT_TYPE_FILTERS,
+  LIBRARY_DOCUMENT_TYPES,
+} from "../utils/libraryDocumentTypes";
 import "./Blog.css";
 import "./Biblioteca.css";
 
@@ -35,6 +40,8 @@ export default function Biblioteca() {
   const [adminStatus, setAdminStatus] = useState("idle");
 
   const [pageMessage, setPageMessage] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedType, setSelectedType] = useState("Todos");
 
   const [isAddOpen, setIsAddOpen] = useState(false);
   const [savingAdd, setSavingAdd] = useState(false);
@@ -47,6 +54,7 @@ export default function Biblioteca() {
     slug: "",
     pdfFilename: "",
     published: false,
+    documentType: DEFAULT_LIBRARY_DOCUMENT_TYPE,
   });
   const [pdfUploading, setPdfUploading] = useState(false);
   const [autoCoverPreviewUrl, setAutoCoverPreviewUrl] = useState(null);
@@ -58,6 +66,7 @@ export default function Biblioteca() {
       slug: "",
       pdfFilename: "",
       published: false,
+      documentType: DEFAULT_LIBRARY_DOCUMENT_TYPE,
     });
     setImageFile(null);
     setPreviewUrl(null);
@@ -180,9 +189,10 @@ export default function Biblioteca() {
     const description = form.description.trim();
     const slug = form.slug.trim();
     const pdfFilename = form.pdfFilename.trim();
+    const documentType = form.documentType?.trim() || "";
 
-    if (!title || !description || !pdfFilename) {
-      setModalError("Preencha título, subtítulo e envie o PDF.");
+    if (!title || !description || !pdfFilename || !documentType) {
+      setModalError("Preencha título, subtítulo, tipo e envie o PDF.");
       return;
     }
 
@@ -206,6 +216,7 @@ export default function Biblioteca() {
         published: !!form.published,
         slug: slug || undefined,
         pdfFilename,
+        documentType,
         coverImagePath: coverImagePath || undefined,
       };
 
@@ -249,6 +260,7 @@ export default function Biblioteca() {
     pdfFilename: "",
     published: false,
     coverImagePath: "",
+    documentType: DEFAULT_LIBRARY_DOCUMENT_TYPE,
   });
   const [editPdfUploading, setEditPdfUploading] = useState(false);
   const [editAutoCoverPreviewUrl, setEditAutoCoverPreviewUrl] = useState(null);
@@ -283,6 +295,7 @@ export default function Biblioteca() {
         pdfFilename: data?.pdfFilename || "",
         published: !!data?.published,
         coverImagePath: data?.coverImagePath || "",
+        documentType: data?.documentType || DEFAULT_LIBRARY_DOCUMENT_TYPE,
       });
       setEditAutoCoverPreviewUrl(
         data?.coverImagePath ? null : resolveLibraryCoverUrl({ pdfFilename: data?.pdfFilename })
@@ -362,9 +375,10 @@ export default function Biblioteca() {
     const description = editForm.description.trim();
     const slug = editForm.slug.trim();
     const pdfFilename = editForm.pdfFilename.trim();
+    const documentType = editForm.documentType?.trim() || "";
 
-    if (!title || !description || !pdfFilename) {
-      setEditError("Preencha título, subtítulo e o PDF.");
+    if (!title || !description || !pdfFilename || !documentType) {
+      setEditError("Preencha título, subtítulo, tipo e o PDF.");
       return;
     }
 
@@ -382,6 +396,7 @@ export default function Biblioteca() {
         published: !!editForm.published,
         slug: slug || undefined,
         pdfFilename,
+        documentType,
         coverImagePath: coverImagePath || undefined,
       };
 
@@ -422,14 +437,23 @@ export default function Biblioteca() {
 
   const visibleDocs = mode === "manage" ? adminDocs : publicDocs;
   const visibleStatus = mode === "manage" ? adminStatus : publicStatus;
-  const filteredDocs =
-    mode !== "manage"
-      ? visibleDocs
-      : visibleDocs.filter((d) => {
-          if (manageFilter === "drafts") return d.published === false;
-          if (manageFilter === "published") return d.published === true;
-          return true;
-        });
+  const filteredDocs = visibleDocs.filter((d) => {
+    if (mode === "manage") {
+      if (manageFilter === "drafts" && d.published !== false) return false;
+      if (manageFilter === "published" && d.published !== true) return false;
+    }
+
+    const lowerSearch = (searchTerm || "").toLowerCase();
+    const title = typeof d.title === "string" ? d.title.toLowerCase() : "";
+    const description = typeof d.description === "string" ? d.description.toLowerCase() : "";
+    const matchesSearch =
+      !lowerSearch || title.includes(lowerSearch) || description.includes(lowerSearch);
+
+    const docType = typeof d.documentType === "string" ? d.documentType : DEFAULT_LIBRARY_DOCUMENT_TYPE;
+    const matchesType = selectedType === "Todos" || docType === selectedType;
+
+    return matchesSearch && matchesType;
+  });
 
   if (BIBLIOTECA_EM_BREVE) {
     return (
@@ -487,6 +511,32 @@ export default function Biblioteca() {
 
         {pageMessage && <div className="blog-message">{pageMessage}</div>}
 
+        <div className="biblioteca-filters">
+          <div className="biblioteca-search-bar">
+            <Search className="biblioteca-search-bar__icon" size={20} aria-hidden />
+            <input
+              type="search"
+              placeholder="Buscar por título ou subtítulo..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="biblioteca-search-bar__input"
+              aria-label="Buscar documentos"
+            />
+          </div>
+          <div className="biblioteca-types-bar" role="group" aria-label="Filtrar por tipo">
+            {LIBRARY_DOCUMENT_TYPE_FILTERS.map((type) => (
+              <button
+                key={type}
+                type="button"
+                className={`biblioteca-type-btn ${selectedType === type ? "is-active" : ""}`}
+                onClick={() => setSelectedType(type)}
+              >
+                {type}
+              </button>
+            ))}
+          </div>
+        </div>
+
         {mode === "manage" && canManage && (
           <div className="blog-manage-filters">
             <button
@@ -513,11 +563,24 @@ export default function Biblioteca() {
           </div>
         )}
 
+        {visibleStatus === "ready" && (
+          <div className="biblioteca-results-count">
+            <p>
+              {filteredDocs.length} documento{filteredDocs.length !== 1 ? "s" : ""} encontrado
+              {filteredDocs.length !== 1 ? "s" : ""}
+            </p>
+          </div>
+        )}
+
         {visibleStatus === "loading" && <div className="blog-state">Carregando documentos...</div>}
         {visibleStatus === "error" && <div className="blog-state">Não foi possível carregar a biblioteca.</div>}
         {visibleStatus === "ready" && filteredDocs.length === 0 && (
           <div className="blog-state">
-            {mode === "manage" ? "Nenhum documento para este filtro." : "Nenhum documento publicado ainda."}
+            {mode === "manage"
+              ? "Nenhum documento para este filtro."
+              : searchTerm || selectedType !== "Todos"
+                ? "Nenhum documento encontrado com os filtros selecionados."
+                : "Nenhum documento publicado ainda."}
           </div>
         )}
 
@@ -591,6 +654,21 @@ export default function Biblioteca() {
                   onChange={(e) => setForm((p) => ({ ...p, description: e.target.value }))}
                   disabled={savingAdd}
                 />
+              </div>
+              <div className="form-group">
+                <label htmlFor="lib-type">Tipo *</label>
+                <select
+                  id="lib-type"
+                  value={form.documentType}
+                  onChange={(e) => setForm((p) => ({ ...p, documentType: e.target.value }))}
+                  disabled={savingAdd}
+                >
+                  {LIBRARY_DOCUMENT_TYPES.map((type) => (
+                    <option key={type} value={type}>
+                      {type}
+                    </option>
+                  ))}
+                </select>
               </div>
               <div className="form-group">
                 <label htmlFor="lib-pdf">PDF *</label>
@@ -698,6 +776,21 @@ export default function Biblioteca() {
                   onChange={(e) => setEditForm((p) => ({ ...p, description: e.target.value }))}
                   disabled={savingEdit}
                 />
+              </div>
+              <div className="form-group">
+                <label htmlFor="lib-edit-type">Tipo *</label>
+                <select
+                  id="lib-edit-type"
+                  value={editForm.documentType}
+                  onChange={(e) => setEditForm((p) => ({ ...p, documentType: e.target.value }))}
+                  disabled={savingEdit}
+                >
+                  {LIBRARY_DOCUMENT_TYPES.map((type) => (
+                    <option key={type} value={type}>
+                      {type}
+                    </option>
+                  ))}
+                </select>
               </div>
               <div className="form-group">
                 <label htmlFor="lib-edit-pdf">PDF *</label>
