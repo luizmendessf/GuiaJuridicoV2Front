@@ -4,7 +4,7 @@ import { resolveLibraryCoverUrl, resolvePdfUrl } from "../../services/apiService
 import "./LibraryDocumentCard.css";
 
 export default function LibraryDocumentCard({ document: doc, onClick, showStatus = false, actions }) {
-  const { id, title, description, slug, published, pdfFilename } = doc;
+  const { id, title, description, slug, published, pdfFilename, documentType } = doc;
   const to = `/biblioteca/${slug || id}`;
   const imageUrl = resolveLibraryCoverUrl(doc);
   const pdfUrl = resolvePdfUrl(pdfFilename);
@@ -34,6 +34,9 @@ export default function LibraryDocumentCard({ document: doc, onClick, showStatus
             <div className="library-doc-card__image-overlay" />
           </div>
           <div className="card__content library-doc-card__content">
+            {documentType && (
+              <div className="library-doc-card__type">{documentType}</div>
+            )}
             {showStatus && typeof published === "boolean" && (
               <div className={`library-doc-card__badge ${published ? "is-published" : "is-draft"}`}>
                 {published ? "Publicado" : "Rascunho"}
