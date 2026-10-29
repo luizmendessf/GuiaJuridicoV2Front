@@ -6,10 +6,8 @@ import "./OrganizersCarousel.css";
 
 // Imagens dos organizadores
 import claraPradoImg from '../../../assets/imagens/clara-prado.jpg';
-import luizMendesImg from '../../../assets/imagens/luiz-mendes.jpg';
 import brunaImg from '../../../assets/imagens/Bruna.jpeg';
 import camilaImg from '../../../assets/imagens/camila.png';
-import arthurImg from '../../../assets/imagens/arthur.png';
 import millenaImg from '../../../assets/imagens/millena.png';
 import elisaPradoImg from '../../../assets/imagens/elisa.png';
 import tirzahImg from '../../../assets/imagens/tirzah.jpg';
@@ -32,15 +30,6 @@ const organizers = [
       "Bacharelanda em Direito pela UFS e fundadora da Sociedade Sergipana de Debates. Idealizou o Guia Jurídico para ampliar o acesso ao conhecimento e oportunidades na área jurídica.",
     variant: "primary",
   },
-  {
-    name: "Luiz Mendes",
-    role: "Co-fundador",
-    image: luizMendesImg,
-    description:
-      "Desenvolvedor full-stack e bacharelando em Ciência da Computação. Criou o Guia Jurídico com o propósito de facilitar o acesso à informação por meio da tecnologia.",
-    variant: "secondary",
-  },
-
   {
     name: "Bruna Bomfim Matos",
     role: "Organizadora",

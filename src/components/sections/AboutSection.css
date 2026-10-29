@@ -66,8 +66,19 @@
     max-width: 64rem;
     margin: 0 auto;
     align-items: stretch;
-  
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  }
+
+  /* Dois fundadores: colunas iguais e cards com a mesma altura */
+  .about__grid--founders {
+    grid-template-columns: 1fr;
+    max-width: 52rem;
+  }
+
+  @media (min-width: 768px) {
+    .about__grid--founders {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
   }
 
   /* Os cards dentro do grid ocupam 100% da altura disponível da linha */
