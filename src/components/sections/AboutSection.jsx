@@ -6,13 +6,12 @@ import ProfileCard from "../cards/ProfileCard";
 
 // Imagens para a variante de fundadores
 import claraPradoImg from "../../assets/imagens/clara-prado.jpg";
-import luizMendesImg from "../../assets/imagens/luiz-mendes.jpg";
 import elisaPradoImg from "../../assets/imagens/elisa.png";
 
 /**
  * Componente AboutSection
  * - variant="carousel": exibe o carrossel completo (padrão, usado na página Sobre)
- * - variant="founders": exibe apenas os dois fundadores (usado na Home)
+ * - variant="founders": exibe apenas as fundadoras (usado na Home)
  */
 export default function AboutSection({
   variant = "carousel",
@@ -31,7 +30,7 @@ export default function AboutSection({
         {variant === "carousel" ? (
           <OrganizersCarousel />
         ) : (
-          <div className="about__grid">
+          <div className="about__grid about__grid--founders">
             <ProfileCard
               name="Clara Prado"
               role="Co-fundadora"
@@ -40,19 +39,12 @@ export default function AboutSection({
               variant="primary"
             />
             <ProfileCard
-              name="Luiz Mendes"
-              role="Co-fundador"
-              image={luizMendesImg}
-              description="Desenvolvedor full-stack e bacharelando em Ciência da Computação. Criou o Guia Jurídico com o propósito de facilitar o acesso à informação por meio da tecnologia."
-              variant="secondary"
-            />
-           <ProfileCard
               name="Elisa Prado"
               role="Co-fundadora"
               image={elisaPradoImg}
               description="Bacharelanda em Direito pela UFS e co-fundadora da Sociedade Sergipana de Debates. Idealizou o Guia Jurídico para ampliar o acesso ao conhecimento e oportunidades na área jurídica."
-              variant="primary"
-            /> 
+              variant="secondary"
+            />
           </div>
         )}
       </div>
